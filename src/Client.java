@@ -1,28 +1,38 @@
+import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Scanner;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
-public class Client {
+public class Client extends JFrame{
 	private Map<Point,String> dataPoints;
-	private Scanner reader;
 	private Producer<String,String> producer;
 	private Consumer<String,String> consumer;
 	
+	
 	public Client() {
+		
+		//Creating the properties for the consumer and producer
+		String name = "suchlol.com:9092";
+		String name1 = "suchlol.com:2181";
 		dataPoints = new HashMap<Point,String>();
-		addPoint();
 		Properties props = new Properties();
-		props.put("bootstrap.servers", "localhost:9092");
+		props.put("bootstrap.servers", name);
 		props.put("acks", "all");
 		props.put("retries", 0);
 		props.put("batch.size", 16384);
@@ -32,7 +42,7 @@ public class Client {
 		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		producer = new KafkaProducer<>(props);
 		Properties props1 = new Properties();
-		props1.put("bootstrap.servers", "localhost:9092");
+		props1.put("bootstrap.servers", name1);
 		props1.put("group.id", "test");
 		props1.put("enable.auto.commit", "false");
 		props1.put("auto.commit.interval.ms", "1000");
@@ -40,98 +50,110 @@ public class Client {
 		props1.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 		props1.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 		consumer = new KafkaConsumer<>(props1);
-		consumer.subscribe(Arrays.asList("newTopics"));
+		consumer.subscribe(Arrays.asList("newTopic"));
+		
+		//Creating the gui components for the client
+		setUp();
+		
+	}
+	
+	public void setUp() {
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setSize(500, 500);
+		this.setTitle("Java Client");
+		this.setLayout(new GridLayout(3,1));
+		JButton addButton = new JButton("Add Point");
+		addButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addPoint();
+			}
+		});
+		this.add(addButton);
+		JButton updateButton = new JButton("Update Point");
+		updateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updatePoint();
+			}
+		});
+		this.add(updateButton);
+		JButton printPointsButton = new JButton("Print Points");
+		printPointsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				printValues();
+			}
+		});
+		this.add(printPointsButton);
+		
 	}
 	
 	public void printValues() {
-		System.out.println(dataPoints);
+		JDialog printDialog = new JDialog();
+		printDialog.setTitle("All Points");
+		JLabel label = new JLabel();
+		label.setText(dataPoints.toString());
+		printDialog.add(label);
+		printDialog.setSize(300,300);
+		printDialog.setModal(true);
+		printDialog.setVisible(true);
 	}
 	
 	public void addPoint() {
-		reader = new Scanner(System.in);
-		boolean loop = true;
-		String entry = "";
-		while (loop) {
-			System.out.print("Enter a point followed by a name (x y name) Q/q to quit: ");
-			entry = reader.nextLine();
-			if (entry.equals("Q") || entry.equals("q")) {
-				loop = false;
+		JDialog addDialog = new JDialog();
+		JTextField point1 = new JTextField();
+		JTextField point2 = new JTextField();
+		JTextField name = new JTextField();
+		JButton submitButton = new JButton("Submit");
+		submitButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Point pt = new Point(Integer.parseInt(point1.getText()),Integer.parseInt(point2.getText()));
+				dataPoints.put(pt, name.getText());
+				addDialog.setVisible(false);
 			}
-			String[] userString = entry.split("\\s+");
-			Point pt = null;
-			try {
-				pt = new Point(Integer.parseInt(userString[0]), Integer.parseInt(userString[1]));
-			} catch (Exception e) {
-				System.out.println("Please enter a valid x y coordinate.");
-			}
-			String name = userString[2];
-			dataPoints.put(pt,name);
-		}
+		});
+		addDialog.setLayout(new GridLayout(4,1));
+		
+		addDialog.add(point1);
+		addDialog.add(point2);
+		addDialog.add(name);
+		addDialog.add(submitButton);
+		addDialog.setTitle("Adding a point");
+		addDialog.setSize(200,200);
+		addDialog.setModal(true);
+		addDialog.setVisible(true);
+		
 	}
 	
 	public void updatePoint() {
-		reader = new Scanner(System.in);
-		System.out.print("Enter the x and y value of the point you want to change: ");
-		String enter = "";
-		enter = reader.nextLine();
-		String[] enterString = enter.split("\\s+");
-		if (!dataPoints.containsKey(new Point(Integer.parseInt(enterString[0]),Integer.parseInt(enterString[1])))) {
-			System.out.println("The data does not contain this point");
-			return;
-		}
-		System.out.print("Enter the new name for the point you just entered: ");
-		String newName = "";
-		newName = reader.nextLine();
-		dataPoints.put(new Point(Integer.parseInt(enterString[0]),Integer.parseInt(enterString[1])), newName);
-		producer.send(new ProducerRecord<String, String>("newTopic", "key", enterString[0]+" "+enterString[1]+newName));
-	}
-	
-	public void run() {
-		reader = new Scanner(System.in);
-		printOptions();
-		boolean loop = true;
-		String enter = "";
-		while (loop) {
-			System.out.print("Enter your option choice: ");
-			enter = reader.nextLine();
-			switch (enter) {
-			case "1":
-				printValues();
-				break;
-			case "2":
-				addPoint();
-				break;
-			case "3":
-				updatePoint();
-				break;
-			case "4":
-				printOptions();
-				break;
-			case "5":
-				loop = false;
-				break;
-			default:
-				System.out.println("Please select a valid option.");
-				break;
+		JDialog updateDialog = new JDialog();
+		updateDialog.setModal(true);
+		updateDialog.setTitle("Update a Point");
+		updateDialog.setSize(200, 200);
+		JTextField point1 = new JTextField();
+		JTextField point2 = new JTextField();
+		JTextField name = new JTextField();
+		JButton submitButton = new JButton("Submit");
+		submitButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Point pt = new Point(Integer.parseInt(point1.getText()),Integer.parseInt(point2.getText()));
+				dataPoints.put(pt,name.getText());
+				producer.send(new ProducerRecord<String, String>("newTopic", "key", point1.getText()+point2.getText()+name.getText()));
+				updateDialog.setVisible(false);
 			}
-			ConsumerRecords<String, String> records = consumer.poll(100);
-			System.out.println(records);
-		}
-		reader.close();
+		});
+		updateDialog.add(point1);
+		updateDialog.add(point2);
+		updateDialog.add(name);
+		updateDialog.add(submitButton);
+		updateDialog.setLayout(new GridLayout(4,1));
+		updateDialog.setVisible(true);
+		
+		
 	}
 	
-	public void printOptions() {
-		System.out.println("Options:");
-		System.out.println("1: Print dataPoints");
-		System.out.println("2: Add new dataPoint(s)");
-		System.out.println("3: Update dataPoint(s)");
-		System.out.println("4: Print options again");
-		System.out.println("5: Quit");
-	}
 	
 	public static void main(String[] args) {
 		Client client = new Client();
-		client.run();
-		
+		client.setVisible(true);		
 	}
+	
 }
