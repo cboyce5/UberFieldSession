@@ -18,9 +18,7 @@ enum FeatureState {
 
 struct Rectangle {
     1: Point top_lt;
-    2: Point top_rt;
-    3: Point btm_lt;
-    4: Point btm_rt;
+    2: Point btm_rt;
 }
 
 struct Feature {

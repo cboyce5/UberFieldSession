@@ -34,9 +34,7 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Rectangle");
 
   private static final org.apache.thrift.protocol.TField TOP_LT_FIELD_DESC = new org.apache.thrift.protocol.TField("top_lt", org.apache.thrift.protocol.TType.STRUCT, (short)1);
-  private static final org.apache.thrift.protocol.TField TOP_RT_FIELD_DESC = new org.apache.thrift.protocol.TField("top_rt", org.apache.thrift.protocol.TType.STRUCT, (short)2);
-  private static final org.apache.thrift.protocol.TField BTM_LT_FIELD_DESC = new org.apache.thrift.protocol.TField("btm_lt", org.apache.thrift.protocol.TType.STRUCT, (short)3);
-  private static final org.apache.thrift.protocol.TField BTM_RT_FIELD_DESC = new org.apache.thrift.protocol.TField("btm_rt", org.apache.thrift.protocol.TType.STRUCT, (short)4);
+  private static final org.apache.thrift.protocol.TField BTM_RT_FIELD_DESC = new org.apache.thrift.protocol.TField("btm_rt", org.apache.thrift.protocol.TType.STRUCT, (short)2);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -45,16 +43,12 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
   }
 
   public Point top_lt; // required
-  public Point top_rt; // required
-  public Point btm_lt; // required
   public Point btm_rt; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     TOP_LT((short)1, "top_lt"),
-    TOP_RT((short)2, "top_rt"),
-    BTM_LT((short)3, "btm_lt"),
-    BTM_RT((short)4, "btm_rt");
+    BTM_RT((short)2, "btm_rt");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -71,11 +65,7 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
       switch(fieldId) {
         case 1: // TOP_LT
           return TOP_LT;
-        case 2: // TOP_RT
-          return TOP_RT;
-        case 3: // BTM_LT
-          return BTM_LT;
-        case 4: // BTM_RT
+        case 2: // BTM_RT
           return BTM_RT;
         default:
           return null;
@@ -122,10 +112,6 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
     tmpMap.put(_Fields.TOP_LT, new org.apache.thrift.meta_data.FieldMetaData("top_lt", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Point.class)));
-    tmpMap.put(_Fields.TOP_RT, new org.apache.thrift.meta_data.FieldMetaData("top_rt", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Point.class)));
-    tmpMap.put(_Fields.BTM_LT, new org.apache.thrift.meta_data.FieldMetaData("btm_lt", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Point.class)));
     tmpMap.put(_Fields.BTM_RT, new org.apache.thrift.meta_data.FieldMetaData("btm_rt", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Point.class)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -137,14 +123,10 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
 
   public Rectangle(
     Point top_lt,
-    Point top_rt,
-    Point btm_lt,
     Point btm_rt)
   {
     this();
     this.top_lt = top_lt;
-    this.top_rt = top_rt;
-    this.btm_lt = btm_lt;
     this.btm_rt = btm_rt;
   }
 
@@ -154,12 +136,6 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
   public Rectangle(Rectangle other) {
     if (other.isSetTop_lt()) {
       this.top_lt = new Point(other.top_lt);
-    }
-    if (other.isSetTop_rt()) {
-      this.top_rt = new Point(other.top_rt);
-    }
-    if (other.isSetBtm_lt()) {
-      this.btm_lt = new Point(other.btm_lt);
     }
     if (other.isSetBtm_rt()) {
       this.btm_rt = new Point(other.btm_rt);
@@ -173,8 +149,6 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
   @Override
   public void clear() {
     this.top_lt = null;
-    this.top_rt = null;
-    this.btm_lt = null;
     this.btm_rt = null;
   }
 
@@ -199,54 +173,6 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
   public void setTop_ltIsSet(boolean value) {
     if (!value) {
       this.top_lt = null;
-    }
-  }
-
-  public Point getTop_rt() {
-    return this.top_rt;
-  }
-
-  public Rectangle setTop_rt(Point top_rt) {
-    this.top_rt = top_rt;
-    return this;
-  }
-
-  public void unsetTop_rt() {
-    this.top_rt = null;
-  }
-
-  /** Returns true if field top_rt is set (has been assigned a value) and false otherwise */
-  public boolean isSetTop_rt() {
-    return this.top_rt != null;
-  }
-
-  public void setTop_rtIsSet(boolean value) {
-    if (!value) {
-      this.top_rt = null;
-    }
-  }
-
-  public Point getBtm_lt() {
-    return this.btm_lt;
-  }
-
-  public Rectangle setBtm_lt(Point btm_lt) {
-    this.btm_lt = btm_lt;
-    return this;
-  }
-
-  public void unsetBtm_lt() {
-    this.btm_lt = null;
-  }
-
-  /** Returns true if field btm_lt is set (has been assigned a value) and false otherwise */
-  public boolean isSetBtm_lt() {
-    return this.btm_lt != null;
-  }
-
-  public void setBtm_ltIsSet(boolean value) {
-    if (!value) {
-      this.btm_lt = null;
     }
   }
 
@@ -284,22 +210,6 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
       }
       break;
 
-    case TOP_RT:
-      if (value == null) {
-        unsetTop_rt();
-      } else {
-        setTop_rt((Point)value);
-      }
-      break;
-
-    case BTM_LT:
-      if (value == null) {
-        unsetBtm_lt();
-      } else {
-        setBtm_lt((Point)value);
-      }
-      break;
-
     case BTM_RT:
       if (value == null) {
         unsetBtm_rt();
@@ -315,12 +225,6 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
     switch (field) {
     case TOP_LT:
       return getTop_lt();
-
-    case TOP_RT:
-      return getTop_rt();
-
-    case BTM_LT:
-      return getBtm_lt();
 
     case BTM_RT:
       return getBtm_rt();
@@ -338,10 +242,6 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
     switch (field) {
     case TOP_LT:
       return isSetTop_lt();
-    case TOP_RT:
-      return isSetTop_rt();
-    case BTM_LT:
-      return isSetBtm_lt();
     case BTM_RT:
       return isSetBtm_rt();
     }
@@ -367,24 +267,6 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
       if (!(this_present_top_lt && that_present_top_lt))
         return false;
       if (!this.top_lt.equals(that.top_lt))
-        return false;
-    }
-
-    boolean this_present_top_rt = true && this.isSetTop_rt();
-    boolean that_present_top_rt = true && that.isSetTop_rt();
-    if (this_present_top_rt || that_present_top_rt) {
-      if (!(this_present_top_rt && that_present_top_rt))
-        return false;
-      if (!this.top_rt.equals(that.top_rt))
-        return false;
-    }
-
-    boolean this_present_btm_lt = true && this.isSetBtm_lt();
-    boolean that_present_btm_lt = true && that.isSetBtm_lt();
-    if (this_present_btm_lt || that_present_btm_lt) {
-      if (!(this_present_btm_lt && that_present_btm_lt))
-        return false;
-      if (!this.btm_lt.equals(that.btm_lt))
         return false;
     }
 
@@ -419,26 +301,6 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
     }
     if (isSetTop_lt()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.top_lt, typedOther.top_lt);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetTop_rt()).compareTo(typedOther.isSetTop_rt());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetTop_rt()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.top_rt, typedOther.top_rt);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetBtm_lt()).compareTo(typedOther.isSetBtm_lt());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetBtm_lt()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.btm_lt, typedOther.btm_lt);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -481,22 +343,6 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("top_rt:");
-    if (this.top_rt == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.top_rt);
-    }
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("btm_lt:");
-    if (this.btm_lt == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.btm_lt);
-    }
-    first = false;
-    if (!first) sb.append(", ");
     sb.append("btm_rt:");
     if (this.btm_rt == null) {
       sb.append("null");
@@ -513,12 +359,6 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
     // check for sub-struct validity
     if (top_lt != null) {
       top_lt.validate();
-    }
-    if (top_rt != null) {
-      top_rt.validate();
-    }
-    if (btm_lt != null) {
-      btm_lt.validate();
     }
     if (btm_rt != null) {
       btm_rt.validate();
@@ -568,25 +408,7 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 2: // TOP_RT
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.top_rt = new Point();
-              struct.top_rt.read(iprot);
-              struct.setTop_rtIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 3: // BTM_LT
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.btm_lt = new Point();
-              struct.btm_lt.read(iprot);
-              struct.setBtm_ltIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 4: // BTM_RT
+          case 2: // BTM_RT
             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
               struct.btm_rt = new Point();
               struct.btm_rt.read(iprot);
@@ -615,16 +437,6 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
         struct.top_lt.write(oprot);
         oprot.writeFieldEnd();
       }
-      if (struct.top_rt != null) {
-        oprot.writeFieldBegin(TOP_RT_FIELD_DESC);
-        struct.top_rt.write(oprot);
-        oprot.writeFieldEnd();
-      }
-      if (struct.btm_lt != null) {
-        oprot.writeFieldBegin(BTM_LT_FIELD_DESC);
-        struct.btm_lt.write(oprot);
-        oprot.writeFieldEnd();
-      }
       if (struct.btm_rt != null) {
         oprot.writeFieldBegin(BTM_RT_FIELD_DESC);
         struct.btm_rt.write(oprot);
@@ -651,24 +463,12 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
       if (struct.isSetTop_lt()) {
         optionals.set(0);
       }
-      if (struct.isSetTop_rt()) {
+      if (struct.isSetBtm_rt()) {
         optionals.set(1);
       }
-      if (struct.isSetBtm_lt()) {
-        optionals.set(2);
-      }
-      if (struct.isSetBtm_rt()) {
-        optionals.set(3);
-      }
-      oprot.writeBitSet(optionals, 4);
+      oprot.writeBitSet(optionals, 2);
       if (struct.isSetTop_lt()) {
         struct.top_lt.write(oprot);
-      }
-      if (struct.isSetTop_rt()) {
-        struct.top_rt.write(oprot);
-      }
-      if (struct.isSetBtm_lt()) {
-        struct.btm_lt.write(oprot);
       }
       if (struct.isSetBtm_rt()) {
         struct.btm_rt.write(oprot);
@@ -678,23 +478,13 @@ public class Rectangle implements org.apache.thrift.TBase<Rectangle, Rectangle._
     @Override
     public void read(org.apache.thrift.protocol.TProtocol prot, Rectangle struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(4);
+      BitSet incoming = iprot.readBitSet(2);
       if (incoming.get(0)) {
         struct.top_lt = new Point();
         struct.top_lt.read(iprot);
         struct.setTop_ltIsSet(true);
       }
       if (incoming.get(1)) {
-        struct.top_rt = new Point();
-        struct.top_rt.read(iprot);
-        struct.setTop_rtIsSet(true);
-      }
-      if (incoming.get(2)) {
-        struct.btm_lt = new Point();
-        struct.btm_lt.read(iprot);
-        struct.setBtm_ltIsSet(true);
-      }
-      if (incoming.get(3)) {
         struct.btm_rt = new Point();
         struct.btm_rt.read(iprot);
         struct.setBtm_rtIsSet(true);
