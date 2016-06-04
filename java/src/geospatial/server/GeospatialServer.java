@@ -10,7 +10,7 @@ import geospatial.thrift.Geospatial;
  * Created by ricky on 5/26/16.
  */
 public class GeospatialServer {
-    public static final int port = 7911;
+    public static final int port = 9090;
 
     private void start() {
         try {
