@@ -12,6 +12,11 @@ import java.util.*;
  * Created by ricky on 5/26/16.
  */
 public class GeospatialHandler implements Geospatial.Iface {
+    KafkaProducer producer = KafkaProducer.getProducer();
+
+    public GeospatialHandler() {
+        Database.init();
+    }
 
     @Override
     public Feature createFeature(Point point, String payload) throws TException {
@@ -26,6 +31,8 @@ public class GeospatialHandler implements Geospatial.Iface {
         bstmt.bind(grid, uuid, payload, point.x, point.y, FeatureState.CLEAN.getValue());
 
         s.execute(bstmt);
+
+        producer.produce("geospatial", uuid.toString());
 
         return new Feature(grid, uuid.toString(), point, FeatureState.CLEAN, payload);
     }
@@ -111,6 +118,9 @@ public class GeospatialHandler implements Geospatial.Iface {
             bstmt.bind(feature.getPoint().getX(), feature.getPoint().getY(), feature.getPayload(), feature.getState().getValue(), feature.getGrid(), UUID.fromString(feature.getId()));
         }
         s.execute(bstmt);
+
+        producer.produce("geospatial", feature.getId());
+
         return true;
     }
 
@@ -121,6 +131,9 @@ public class GeospatialHandler implements Geospatial.Iface {
         BoundStatement bstmt = new BoundStatement(stmt);
         bstmt.bind(feature.getGrid(), UUID.fromString(feature.getId()));
         s.execute(bstmt);
+
+        producer.produce("geospatial", feature.getId());
+
         return true;
     }
 

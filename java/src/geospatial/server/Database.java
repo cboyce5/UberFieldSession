@@ -10,7 +10,7 @@ public class Database {
     private static Cluster cluster = null;
     private static Session session = null;
 
-    public static Session getSession() {
+    public static void init() {
         if(session == null) {
             cluster = Cluster
                     .builder()
@@ -18,6 +18,10 @@ public class Database {
                     .build();
             session = cluster.connect("spatial");
         }
+    }
+
+    public static Session getSession() {
+        init();
 
         return session;
     }

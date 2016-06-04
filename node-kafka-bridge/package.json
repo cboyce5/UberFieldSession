@@ -1,0 +1,14 @@
+{
+  "name": "node-kafka-bridge",
+  "version": "1.0.0",
+  "description": "Connects as a consumer to kafka and broadcasts kafka messages to all connections",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "kafka-node": "^0.3.3"
+  }
+}
