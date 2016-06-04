@@ -62,7 +62,6 @@
                 <input type = "text" style="display:none;"
                        id = "content-type"
                        value = "DIRTY" />
-
             </div>
             <div id="button-space">
                 <button onclick="createDataButton()">Create Marker</button>
@@ -81,10 +80,10 @@
             var myLatLng = {lat: 39.7555, lng: -105.2211};
 
             map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 14,
-                center: myLatLng
+                center: myLatLng,
+                zoom: 13,
+                //mapTypeId: google.maps.MapTypeId.SATELLITE
             });
-
 
             marker = new google.maps.Marker({
                 position: myLatLng,
@@ -103,11 +102,11 @@
 
 
             // Create a <script> tag and set the USGS URL as the source.
-            var script = document.createElement('script');
+            //var script = document.createElement('script');
             // (In this example we use a locally stored copy instead.)
             // script.src = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp';
-            script.src = '/maps/documentation/javascript/tutorials/js/earthquake_GeoJSONP.js';
-            document.getElementsByTagName('head')[0].appendChild(script);
+            //script.src = '/maps/documentation/javascript/tutorials/js/earthquake_GeoJSONP.js';
+            //document.getElementsByTagName('head')[0].appendChild(script);
 
             //TO DO THE STUFF ABOVE
 
@@ -118,6 +117,47 @@
             //map.addListener('click', sizeObjects);
         }
 
+        function saveMarkersToServer() {
+            var m;
+            for (m in marker) {
+                console.log(m.getTitle());
+            }
+        }
+
+        function loadMarkersFromServer() {
+            //loop through the JSON shit to populate map with markers
+            marker = new google.maps.Marker({
+                position: {lat: 39.75, lng: -105.22},
+                map: map,
+                title: 'title', //read in title id you slut
+                description: 'hi,' // read in description
+            })
+        }
+        function getCornerPoints(){
+
+            var bounds = map.getBounds();
+
+            var NECorner = bounds.getNorthEast();
+            var SWCorner = bounds.getSouthWest();
+
+            var corner1 = new google.maps.LatLng(NECorner.lat(), NECorner.lng());
+            var corner2 = new google.maps.LatLng(NECorner.lat(), SWCorner.lng());
+            var corner3 = new google.maps.LatLng(SWCorner.lat(), SWCorner.lng());
+            var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
+
+            /*
+             var polygon = new google.maps.Polygon({
+             map: map,
+             paths: [corner1, corner2, corner3, corner4],
+             fillColor: 'red',
+             fillOpacity: 0.7
+             });
+             */
+
+            console.log(corner1.toString(), '\n', corner2.toString(), '\n', corner3.toString(), '\n', corner4.toString());
+
+        }
+
         function showDiv() {
             var div = document.getElementById('drop-down');
             if (div.style.display !== 'none') {
@@ -126,6 +166,9 @@
             else {
                 div.style.display = 'block';
             }
+            getCornerPoints();
+            loadMarkersFromServer();
+            saveMarkersToServer();
         }
 
 
@@ -213,6 +256,7 @@
 
         // Loop through the results array and place a marker for each
         // set of coordinates.
+        /*
         window.eqfeed_callback = function(results) {
             for (var i = 0; i < results.features.length; i++) {
                 var coords = results.features[i].geometry.coordinates;
@@ -224,7 +268,7 @@
             }
         }
         google.maps.event.addDomListener(window, 'load', initialize)
-
+*/
 
     </script>
 
@@ -254,8 +298,9 @@
         }
     </script>
     -->
+
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBORoljxV99j1KvcO2mkD4BNNuAPanaZtE&libraries=drawing&callback=initMap"
             async defer></script>
+    </body>
 
-        </body>
 </html>
