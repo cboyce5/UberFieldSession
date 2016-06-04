@@ -23,7 +23,7 @@ connection.on('error', function(err) {
 });
 
 app.get('/test', function(req, res) {
-   var feature = client.createFeature(new ttypes.Point(68, 70), "{0x421}", function(err, feature) {
+   client.createFeature(new ttypes.Point(68, 70), "{0x421}", function(err, feature) {
        res.send(feature.id);
    });
 
