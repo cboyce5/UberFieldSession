@@ -1,6 +1,4 @@
-
-
-function CustomMarker(latlng, map, args, title, description, div) {
+function CustomMarker(latlng, map, args, title, description) {
 	this.latlng = latlng;
 	this.args = args;
 	this.title = title;
@@ -22,46 +20,16 @@ CustomMarker.prototype.draw = function() {
 
 		var div_title = document.createElement('div');
 		div_title.className = 'div_title';
-		div_title.innerHTML= this.title
-		/*
-		div_title.style.position = 'absolute';
-		div_title.style.cursor = 'pointer';
-		div_title.style.width = '200px';
-		div_title.style.height = '30px';
-		div_title.style.fontSize = '18px';
-		div_title.style.top = '5px';
-		div_title.style.left = '5px';
-		div_title.innerHTML= this.title
-		div_title.style.textAlign = 'center';
-		//div_title.style.border = '3px solid black';
-		*/
+		div_title.innerHTML= this.title;
+		console.log(this.title);
 		
 		var div_description = document.createElement('div');
 		div_description.className = 'div_description';
 		div_description.innerHTML= this.description;
-		/*
-		div_description.style.position = 'absolute';
-		div_description.style.cursor = 'pointer';
-		div_description.style.width = '200px';
-		div_description.style.height = '70px';
-		div_description.style.top = '35px';
-		div_description.style.left = '5px';
-		div_description.innerHTML= this.description;
-		//div_description.style.border = '3px solid black';
-*/
+
 		var div_pointer = document.createElement('div');
 		div_pointer.className = 'triangle-with-shadow', 'triangle-with-shadow:after';
-		/*
-		div_pointer.style.position = 'absolute';
-		div_pointer.style.width = '';
-		div_pointer.style.height = '';
-		div_pointer.style.borderStyle = 'solid';
-		div_pointer.style.top = '100px';
-		div_pointer.style.left = '88px';
-		div_pointer.style.borderColor = 'white transparent transparent transparent';
-		div_pointer.style.borderWidth = '25px 12px 0px 12px';
-		div_pointer.style. = '4px 10px 10px -6px #000000'
-		*/
+
 
 		div = this.div = document.createElement('div');
 		div.className = 'div_within_marker';
@@ -76,10 +44,21 @@ CustomMarker.prototype.draw = function() {
 			div.dataset.marker_id = self.args.marker_id;
 		}
 
-		google.maps.event.addDomListener(div, "click", function(event) {
+		google.maps.event.addDomListener(div, "click", function() {
 			//alert('You clicked on a custom marker!');
 			//google.maps.event.trigger(self, "click");
-			this.prototype.toggle();
+			//this.prototype.toggle();
+			//this.args.rightSidebar
+			document.getElementById("titleTextEditor").value = div.childNodes[1].innerHTML;
+			document.getElementById("descriptionTextEditor").value = div.childNodes[2].innerHTML;
+			var div1 = document.getElementById('right-sidebar');
+			if (div1.style.display !== 'none') {
+				div1.style.display = 'none';
+			}
+			else {
+				div1.style.display = 'block';
+			}
+
 		});
 
 
@@ -94,7 +73,6 @@ CustomMarker.prototype.draw = function() {
 		div.style.top = (point.y - 125) + 'px';
 	}
 
-	//this.div = div;
 };
 
 CustomMarker.prototype.remove = function() {
@@ -132,4 +110,17 @@ CustomMarker.prototype.toggle = function() {
 			this.hide();
 		}
 	}
+};
+
+CustomMarker.prototype.getID = function() {
+	return this.args.marker_id;
+};
+
+
+CustomMarker.prototype.setValues = function(title, description) {
+	console.log(title);
+	this.title = title;
+	this.description = description;
+	this.div.childNodes[1].innerHTML = this.title;
+	this.div.childNodes[2].innerHTML = this.description;
 };

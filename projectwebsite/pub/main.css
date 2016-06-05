@@ -98,13 +98,42 @@ body
     bottom: 0;
 }
 
+#right-sidebar {
+    width: 233px;
+    position: absolute;
+    top: 89px;
+    background-color: aqua;
+    border: 1px solid black;
+    right: 0;
+    bottom: 0;
+}
+
+#surrounding-outline {
+    margin: 3px;
+    border: 1px solid black;
+}
+
+#titleTextEditor {
+    height: 40px;
+    margin: 5px;
+    font-size:12pt;
+    text-align: start;
+}
+
+#descriptionTextEditor {
+    height: 100px;
+    width: 213px;
+    margin: 5px;
+    font-size:10pt;
+    text-align: start;
+}
+
 #buttonBar {
     bottom: 0;
     float: left;
     left: 144px;
     margin-top: 15px;
     padding: 30px;
-
 }
 
 .div_title {

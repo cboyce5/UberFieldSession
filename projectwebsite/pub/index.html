@@ -74,12 +74,32 @@
                 <button onclick="createDataButton()">Create Marker</button>
             </div>
         </div>
+        <div id="right-sidebar" style="display:none;" class="editing_stuff" >
+            <div id="surrounding-outline">
+                <div id="title-editor">
+                    <label>Title:</label>
+                    <input type = "text"
+                           id = "titleTextEditor"
+                           value = "Please enter a description" />
+                </div>
+                <div id="description-editor">
+                    <Label>Description:</Label>
+                    <input type = "text"
+                           id = "descriptionTextEditor"
+                           value = "Please enter a title" />
+                </div>
+                <div id="button-holder">
+                        <button onclick="saveOverDate()">Save</button>
+                        <button onclick="document.getElementById('right-sidebar').style.display = 'none'">Revert</button>
+                </div>
+            </div>
+        </div>
 
     </div>
 
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBORoljxV99j1KvcO2mkD4BNNuAPanaZtE&libraries=drawing"></script>
-    <script type="text/javascript" src="js/CustomGoogleMapMarker.js"></script>
+    <script type="text/javascript" src="js/customMarker.js"></script>
     <script type="text/javascript">
         var poly;
         var map;
@@ -114,11 +134,11 @@
                     customLatLng,
                     map,
                     {
-                        marker_id: '123'
+                        marker_id: '123',
+                        rightSidebar: document.getElementById('right-sidebar')
                     },
                     title,
-                    description,
-                    document.getElementById('randomtext')
+                    description
             ));
 
 
@@ -259,19 +279,29 @@
                     event.latLng,
                     map,
                     {
-                        marker_id: '123'
+                        marker_id: '123',
+                        rightSidebar: document.getElementById('right-sidebar')
                     },
                     title,
-                    description,
-                    document.createElement('randomtext')
+                    description
             ));
 
             clearListeners();
 
-
-
             document.getElementById("titleText").value = "Please enter a title";
             document.getElementById("descriptionText").value = "Please enter a description";
+        }
+
+        function saveOverDate() {
+
+            var title = document.getElementById("titleTextEditor").value;
+            var description = document.getElementById("descriptionTextEditor").value;
+            console.log("fuck");
+            if (overlays[0].getID() == '123') {
+                console.log("fuck2");
+                overlays[0].setValues(title, description);
+            }
+
         }
 
         function sizeObjects() {
@@ -357,7 +387,7 @@
 
 
 <!--
-    <script type="text/javascript" src="js/CustomGoogleMapMarker.js"></script>
+    <script type="text/javascript" src="js/customMarker.js"></script>
     <script type="text/javascript">
 
         function initialize() {
