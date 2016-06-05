@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <link href = "main.css" rel="stylesheet" type="text/css"/>
     <head>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+        <meta charset="utf-8">
         <title>Simple  for Uber</title>
         <meta name="viewport" content="initial-scale=1.0">
         <meta charset="utf-8">
@@ -41,6 +43,11 @@
             <div id="map">
 
             </div>
+
+            <div id="randomtext">
+
+            </div>
+
         </div>
 
         <div id="drop-down" style="display:none;" class="answer_list" >
@@ -67,22 +74,50 @@
                 <button onclick="createDataButton()">Create Marker</button>
             </div>
         </div>
+        <div id="right-sidebar" style="display:none;" class="editing_stuff" >
+            <div id="surrounding-outline">
+                <div id="title-editor">
+                    <label>Title:</label>
+                    <input type = "text"
+                           id = "titleTextEditor"
+                           value = "Please enter a description" />
+                </div>
+                <div id="description-editor">
+                    <Label>Description:</Label>
+                    <input type = "text"
+                           id = "descriptionTextEditor"
+                           value = "Please enter a title" />
+                </div>
+                <div id="button-holder">
+                        <button onclick="saveOverData()">Save</button>
+                        <input type = "text" disabled size="11"
+                           id = "id-value"
+                           value = "Please enter a title" />
+                        <button onclick="document.getElementById('right-sidebar').style.display = 'none'">Revert</button>
+                </div>
+            </div>
+        </div>
 
     </div>
 
-    <script type="text/javascript">
 
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBORoljxV99j1KvcO2mkD4BNNuAPanaZtE&libraries=drawing"></script>
+    <script type="text/javascript" src="js/customMarker.js"></script>
+    <script type="text/javascript">
         var poly;
         var map;
         var marker;
+        var myLatLng;
+        var overlays = [];
+        var outSideArea = 0;
 
         function initMap() {
-            var myLatLng = {lat: 39.7555, lng: -105.2211};
+
+            myLatLng = {lat: 39.7555, lng: -105.2211};
 
             map = new google.maps.Map(document.getElementById('map'), {
                 center: myLatLng,
                 zoom: 13,
-                //mapTypeId: google.maps.MapTypeId.SATELLITE
             });
 
             marker = new google.maps.Marker({
@@ -92,14 +127,48 @@
                 draggable: true
             });
 
+
+
+            var title = "Here fuck";
+            var description = "super fuck";
+            var customLatLng = new google.maps.LatLng(39.7555, -105.2211);
+
+            overlays.push(new CustomMarker(
+                    customLatLng,
+                    map,
+                    {
+                        marker_id: '123',
+                        rightSidebar: document.getElementById('right-sidebar')
+                    },
+                    title,
+                    description
+            ));
+
+
+
+
+            map.addListener('zoom_changed', function() {
+
+                var oLength = overlays.length;
+
+                if (map.getZoom() >= 15) {
+                    for (var i = 0; i < oLength; i++) {
+                        overlays[i].show();
+                    }
+                } else {
+                    for (var i = 0; i < oLength; i++) {
+                        overlays[i].hide();
+                    }
+                }
+            });
+/*
             poly = new google.maps.Polyline({
                 strokeColor: '#000000',
                 strokeOpacity: 1.0,
                 strokeWeight: 3
             });
             poly.setMap(map);
-
-
+            */
 
             // Create a <script> tag and set the USGS URL as the source.
             //var script = document.createElement('script');
@@ -111,41 +180,45 @@
             //TO DO THE STUFF ABOVE
 
 
+
             // Add a listener for the click event
             // map.addListener('click', addLatLng);
             //map.addListener('click', addMarker);
             //map.addListener('click', sizeObjects);
         }
 
+        google.maps.event.addDomListener(window, 'load', initMap);
+
         function saveMarkersToServer() {
-            var m;
-            for (m in marker) {
-                //console.log(m.getTitle());
+
+        }
+
+
+            function loadMarkersFromServer() {
+                //loop through the JSON shit to populate map with markers
+                marker = new google.maps.Marker({
+                    position: {lat: 39.75, lng: -105.22},
+                    map: map,
+                    title: 'title', //read in title id you slut
+                    description: 'hi,' // read in description
+                })
+
+
             }
-        }
 
-        function loadMarkersFromServer() {
-            //loop through the JSON shit to populate map with markers
-            marker = new google.maps.Marker({
-                position: {lat: 39.75, lng: -105.22},
-                map: map,
-                title: 'title', //read in title id you slut
-                description: 'hi,' // read in description
-            })
-        }
-        function getCornerPoints(){
 
-            var bounds = map.getBounds();
+            function getCornerPoints() {
 
-            var NECorner = bounds.getNorthEast();
-            var SWCorner = bounds.getSouthWest();
+                var bounds = map.getBounds();
 
-            var corner1 = new google.maps.LatLng(NECorner.lat(), NECorner.lng());
-            var corner2 = new google.maps.LatLng(NECorner.lat(), SWCorner.lng());
-            var corner3 = new google.maps.LatLng(SWCorner.lat(), SWCorner.lng());
-            var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
+                var NECorner = bounds.getNorthEast();
+                var SWCorner = bounds.getSouthWest();
 
-            /*
+                var corner1 = new google.maps.LatLng(NECorner.lat(), NECorner.lng());
+                var corner2 = new google.maps.LatLng(NECorner.lat(), SWCorner.lng());
+                var corner3 = new google.maps.LatLng(SWCorner.lat(), SWCorner.lng());
+                var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
+                /*
              var polygon = new google.maps.Polygon({
              map: map,
              paths: [corner1, corner2, corner3, corner4],
@@ -153,13 +226,13 @@
              fillOpacity: 0.7
              });
              */
-
-            console.log(corner1.toString(), '\n', corner2.toString(), '\n', corner3.toString(), '\n', corner4.toString());
+                console.log(corner1.toString(), '\n', corner2.toString(), '\n', corner3.toString(), '\n', corner4.toString());
 
         }
 
-        function showDiv() {
-            var div = document.getElementById('drop-down');
+            function showDiv() {
+            var
+                    div = document.getElementById('drop-down');
             if (div.style.display !== 'none') {
                 div.style.display = 'none';
             }
@@ -169,6 +242,7 @@
             getCornerPoints();
             //loadMarkersFromServer();
             //saveMarkersToServer();
+
         }
 
 
@@ -190,11 +264,48 @@
 
         //This places random markers on clicks
         function addMarker(event) {
+            var title = document.getElementById("titleText").value;
+            var description = document.getElementById("descriptionText").value;
+
+
             marker = new google.maps.Marker({
                 position: event.latLng,
-                map: map
+                map: map,
+                title: title,
+                description: description
             });
+
+
+            overlays.push(new CustomMarker(
+                    event.latLng,
+                    map,
+                    {
+                        marker_id: '345',
+                        rightSidebar: document.getElementById('right-sidebar')
+                    },
+                    title,
+                    description
+            ));
+
             clearListeners();
+
+            document.getElementById("titleText").value = "Please enter a title";
+            document.getElementById("descriptionText").value = "Please enter a description";
+        }
+
+        function saveOverData() {
+
+            var title = document.getElementById("titleTextEditor").value;
+            var description = document.getElementById("descriptionTextEditor").value;
+            var currentID = document.getElementById("id-value").value;
+            console.log("fuck");
+            for (var i = 0; i < overlays.length; i++) {
+                if (overlays[i].getID() == currentID) {
+                    console.log("fuck2");
+                    overlays[i].setValues(title, description);
+                }
+            }
+            document.getElementById("right-sidebar").style.display = 'none';
         }
 
         function sizeObjects() {
@@ -254,6 +365,11 @@
         }
 
 
+
+
+
+
+
         // Loop through the results array and place a marker for each
         // set of coordinates.
         /*
@@ -269,6 +385,45 @@
         }
         google.maps.event.addDomListener(window, 'load', initialize)
 */
+
+    </script>
+
+
+<!--
+    <script type="text/javascript" src="js/customMarker.js"></script>
+    <script type="text/javascript">
+
+        function initialize() {
+
+            var myLatlng = new google.maps.LatLng(-31.9546781,115.852662);
+
+            var mapOptions = {
+                zoom: 14,
+                center: myLatlng,
+                disableDefaultUI: true
+            }
+
+            var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+            /*
+             // Example standard marker
+             var marker = new google.maps.Marker({
+             position: myLatlng,
+             map: map,
+             title: 'Hello World!'
+             });
+             */
+
+            overlay = new CustomMarker(
+                    myLatlng,
+                    map,
+                    {
+                        marker_id: '123'
+                    }
+            );
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
 
     </script>
 
@@ -299,8 +454,7 @@
     </script>
     -->
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBORoljxV99j1KvcO2mkD4BNNuAPanaZtE&libraries=drawing&callback=initMap"
-            async defer></script>
+
     </body>
 
 </html>
