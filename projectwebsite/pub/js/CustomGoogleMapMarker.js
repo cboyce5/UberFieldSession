@@ -5,7 +5,7 @@ function CustomMarker(latlng, map, args, title, description, div) {
 	this.args = args;
 	this.title = title;
 	this.description = description;
-	//this.div = div;
+	this.div = null;
 	
 	this.setMap(map);	
 }
@@ -65,23 +65,26 @@ CustomMarker.prototype.draw = function() {
 
 		div = this.div = document.createElement('div');
 		div.className = 'div_within_marker';
-
 		div.appendChild(div_pointer);
 		div.appendChild(div_title);
 		div.appendChild(div_description);
 
-		
+		this.div = div;
+
+
 		if (typeof(self.args.marker_id) !== 'undefined') {
 			div.dataset.marker_id = self.args.marker_id;
-	}
+		}
 
-	google.maps.event.addDomListener(div, "click", function(event) {
-		alert('You clicked on a custom marker!');
-		google.maps.event.trigger(self, "click");
-	});
+		google.maps.event.addDomListener(div, "click", function(event) {
+			//alert('You clicked on a custom marker!');
+			//google.maps.event.trigger(self, "click");
+			this.prototype.toggle();
+		});
 
-	var panes = this.getPanes();
-		panes.overlayImage.appendChild(div);
+
+		var panes = this.getPanes();
+		panes.overlayImage.appendChild(this.div);
 	}
 	
 	var point = this.getProjection().fromLatLngToDivPixel(this.latlng);
@@ -90,6 +93,8 @@ CustomMarker.prototype.draw = function() {
 		div.style.left = (point.x - 100) + 'px';
 		div.style.top = (point.y - 125) + 'px';
 	}
+
+	//this.div = div;
 };
 
 CustomMarker.prototype.remove = function() {
@@ -103,3 +108,28 @@ CustomMarker.prototype.getPosition = function() {
 	return this.latlng;	
 };
 
+// Set the visibility to 'hidden' or 'visible'.
+CustomMarker.prototype.hide = function() {
+	if (this.div) {
+		// The visibility property must be a string enclosed in quotes.
+		this.div.style.visibility = 'hidden';
+	}
+};
+
+CustomMarker.prototype.show = function() {
+	if (this.div) {
+		this.div.style.visibility = 'visible';
+	}
+};
+
+CustomMarker.prototype.toggle = function() {
+	console.log("fuck");
+	if (this.div) {
+		console.log("fuck3");
+		if (this.div.style.visibility === 'hidden') {
+			this.show();
+		} else {
+			this.hide();
+		}
+	}
+};
