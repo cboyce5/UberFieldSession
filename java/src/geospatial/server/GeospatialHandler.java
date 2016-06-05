@@ -67,7 +67,6 @@ public class GeospatialHandler implements Geospatial.Iface {
 
         builder.append("select * from feature where grid in (");
 
-
         for(int i = 0; i < quadKeys.size(); i++) {
             builder.append("?,");
         }
@@ -112,7 +111,7 @@ public class GeospatialHandler implements Geospatial.Iface {
             bstmt = new BoundStatement(stmt);
             bstmt.bind(GridUtil.pointToQuadKey(feature.getPoint()), UUID.fromString(feature.getId()), feature.getPayload(),
                     feature.getPoint().getX(), feature.getPoint().getY(), FeatureState.CLEAN.getValue());
-        }else{
+        } else {
             stmt = s.prepare("update feature set point_x = ?, point_y = ?, payload = ?, state = ? where grid = ? and feature_id = ?");
             bstmt = new BoundStatement(stmt);
             bstmt.bind(feature.getPoint().getX(), feature.getPoint().getY(), feature.getPayload(), feature.getState().getValue(), feature.getGrid(), UUID.fromString(feature.getId()));

@@ -108,7 +108,6 @@ public class DatabaseTests {
             for(Feature f : fs) {
                 assertNotEquals(new Point(54, 54), f.getPoint());
 
-
                 if(f.getPoint().equals(p1)) {
                     has_point_1 = true;
                 } else if(f.getPoint().equals(p2)) {
