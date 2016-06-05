@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Big Aeriolas</title>
+</head>
+<body>
+    <script src="geospatial_types.js"></script>
+    <script src="geospatialapi.js"></script>
+    <script>
+        GeospatialAPI.init();
+        GeospatialAPI.onFeaturesUpdated = function() {
+            console.log('shit');
+            // redraw the features on your map that were updated
+        }
+    </script>
+</body>
+</html>

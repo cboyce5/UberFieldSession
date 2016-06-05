@@ -28,6 +28,7 @@ CustomMarker.prototype.draw = function() {
 		div_description.innerHTML= this.description;
 
 		var div_pointer = document.createElement('div');
+		div_pointer.innerHTML= this.args.marker_id;
 		div_pointer.className = 'triangle-with-shadow', 'triangle-with-shadow:after';
 
 
@@ -51,6 +52,7 @@ CustomMarker.prototype.draw = function() {
 			//this.args.rightSidebar
 			document.getElementById("titleTextEditor").value = div.childNodes[1].innerHTML;
 			document.getElementById("descriptionTextEditor").value = div.childNodes[2].innerHTML;
+			document.getElementById("id-value").value = div.childNodes[0].innerHTML;
 			var div1 = document.getElementById('right-sidebar');
 			if (div1.style.display !== 'none') {
 				div1.style.display = 'none';
