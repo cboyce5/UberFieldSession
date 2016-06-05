@@ -40,7 +40,7 @@ public class Geospatial {
 
     public List<Feature> getFeaturesInRect(Rectangle rect) throws org.apache.thrift.TException;
 
-    public boolean saveFeature(Feature feature) throws org.apache.thrift.TException;
+    public Feature updateFeature(Feature feature) throws org.apache.thrift.TException;
 
     public boolean deleteFeature(Feature feature) throws org.apache.thrift.TException;
 
@@ -54,7 +54,7 @@ public class Geospatial {
 
     public void getFeaturesInRect(Rectangle rect, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.getFeaturesInRect_call> resultHandler) throws org.apache.thrift.TException;
 
-    public void saveFeature(Feature feature, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.saveFeature_call> resultHandler) throws org.apache.thrift.TException;
+    public void updateFeature(Feature feature, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.updateFeature_call> resultHandler) throws org.apache.thrift.TException;
 
     public void deleteFeature(Feature feature, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.deleteFeature_call> resultHandler) throws org.apache.thrift.TException;
 
@@ -150,27 +150,27 @@ public class Geospatial {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getFeaturesInRect failed: unknown result");
     }
 
-    public boolean saveFeature(Feature feature) throws org.apache.thrift.TException
+    public Feature updateFeature(Feature feature) throws org.apache.thrift.TException
     {
-      send_saveFeature(feature);
-      return recv_saveFeature();
+      send_updateFeature(feature);
+      return recv_updateFeature();
     }
 
-    public void send_saveFeature(Feature feature) throws org.apache.thrift.TException
+    public void send_updateFeature(Feature feature) throws org.apache.thrift.TException
     {
-      saveFeature_args args = new saveFeature_args();
+      updateFeature_args args = new updateFeature_args();
       args.setFeature(feature);
-      sendBase("saveFeature", args);
+      sendBase("updateFeature", args);
     }
 
-    public boolean recv_saveFeature() throws org.apache.thrift.TException
+    public Feature recv_updateFeature() throws org.apache.thrift.TException
     {
-      saveFeature_result result = new saveFeature_result();
-      receiveBase(result, "saveFeature");
+      updateFeature_result result = new updateFeature_result();
+      receiveBase(result, "updateFeature");
       if (result.isSetSuccess()) {
         return result.success;
       }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "saveFeature failed: unknown result");
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "updateFeature failed: unknown result");
     }
 
     public boolean deleteFeature(Feature feature) throws org.apache.thrift.TException
@@ -313,35 +313,35 @@ public class Geospatial {
       }
     }
 
-    public void saveFeature(Feature feature, org.apache.thrift.async.AsyncMethodCallback<saveFeature_call> resultHandler) throws org.apache.thrift.TException {
+    public void updateFeature(Feature feature, org.apache.thrift.async.AsyncMethodCallback<updateFeature_call> resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      saveFeature_call method_call = new saveFeature_call(feature, resultHandler, this, ___protocolFactory, ___transport);
+      updateFeature_call method_call = new updateFeature_call(feature, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
-    public static class saveFeature_call extends org.apache.thrift.async.TAsyncMethodCall {
+    public static class updateFeature_call extends org.apache.thrift.async.TAsyncMethodCall {
       private Feature feature;
-      public saveFeature_call(Feature feature, org.apache.thrift.async.AsyncMethodCallback<saveFeature_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public updateFeature_call(Feature feature, org.apache.thrift.async.AsyncMethodCallback<updateFeature_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.feature = feature;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("saveFeature", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        saveFeature_args args = new saveFeature_args();
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("updateFeature", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        updateFeature_args args = new updateFeature_args();
         args.setFeature(feature);
         args.write(prot);
         prot.writeMessageEnd();
       }
 
-      public boolean getResult() throws org.apache.thrift.TException {
+      public Feature getResult() throws org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_saveFeature();
+        return (new Client(prot)).recv_updateFeature();
       }
     }
 
@@ -393,7 +393,7 @@ public class Geospatial {
       processMap.put("createFeature", new createFeature());
       processMap.put("getFeature", new getFeature());
       processMap.put("getFeaturesInRect", new getFeaturesInRect());
-      processMap.put("saveFeature", new saveFeature());
+      processMap.put("updateFeature", new updateFeature());
       processMap.put("deleteFeature", new deleteFeature());
       return processMap;
     }
@@ -458,23 +458,22 @@ public class Geospatial {
       }
     }
 
-    public static class saveFeature<I extends Iface> extends org.apache.thrift.ProcessFunction<I, saveFeature_args> {
-      public saveFeature() {
-        super("saveFeature");
+    public static class updateFeature<I extends Iface> extends org.apache.thrift.ProcessFunction<I, updateFeature_args> {
+      public updateFeature() {
+        super("updateFeature");
       }
 
-      public saveFeature_args getEmptyArgsInstance() {
-        return new saveFeature_args();
+      public updateFeature_args getEmptyArgsInstance() {
+        return new updateFeature_args();
       }
 
       protected boolean isOneway() {
         return false;
       }
 
-      public saveFeature_result getResult(I iface, saveFeature_args args) throws org.apache.thrift.TException {
-        saveFeature_result result = new saveFeature_result();
-        result.success = iface.saveFeature(args.feature);
-        result.setSuccessIsSet(true);
+      public updateFeature_result getResult(I iface, updateFeature_args args) throws org.apache.thrift.TException {
+        updateFeature_result result = new updateFeature_result();
+        result.success = iface.updateFeature(args.feature);
         return result;
       }
     }
@@ -2800,15 +2799,15 @@ public class Geospatial {
 
   }
 
-  public static class saveFeature_args implements org.apache.thrift.TBase<saveFeature_args, saveFeature_args._Fields>, java.io.Serializable, Cloneable   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("saveFeature_args");
+  public static class updateFeature_args implements org.apache.thrift.TBase<updateFeature_args, updateFeature_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("updateFeature_args");
 
     private static final org.apache.thrift.protocol.TField FEATURE_FIELD_DESC = new org.apache.thrift.protocol.TField("feature", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new saveFeature_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new saveFeature_argsTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new updateFeature_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new updateFeature_argsTupleSchemeFactory());
     }
 
     public Feature feature; // required
@@ -2878,13 +2877,13 @@ public class Geospatial {
       tmpMap.put(_Fields.FEATURE, new org.apache.thrift.meta_data.FieldMetaData("feature", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Feature.class)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(saveFeature_args.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(updateFeature_args.class, metaDataMap);
     }
 
-    public saveFeature_args() {
+    public updateFeature_args() {
     }
 
-    public saveFeature_args(
+    public updateFeature_args(
       Feature feature)
     {
       this();
@@ -2894,14 +2893,14 @@ public class Geospatial {
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public saveFeature_args(saveFeature_args other) {
+    public updateFeature_args(updateFeature_args other) {
       if (other.isSetFeature()) {
         this.feature = new Feature(other.feature);
       }
     }
 
-    public saveFeature_args deepCopy() {
-      return new saveFeature_args(this);
+    public updateFeature_args deepCopy() {
+      return new updateFeature_args(this);
     }
 
     @Override
@@ -2913,7 +2912,7 @@ public class Geospatial {
       return this.feature;
     }
 
-    public saveFeature_args setFeature(Feature feature) {
+    public updateFeature_args setFeature(Feature feature) {
       this.feature = feature;
       return this;
     }
@@ -2972,12 +2971,12 @@ public class Geospatial {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof saveFeature_args)
-        return this.equals((saveFeature_args)that);
+      if (that instanceof updateFeature_args)
+        return this.equals((updateFeature_args)that);
       return false;
     }
 
-    public boolean equals(saveFeature_args that) {
+    public boolean equals(updateFeature_args that) {
       if (that == null)
         return false;
 
@@ -2998,13 +2997,13 @@ public class Geospatial {
       return 0;
     }
 
-    public int compareTo(saveFeature_args other) {
+    public int compareTo(updateFeature_args other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
 
       int lastComparison = 0;
-      saveFeature_args typedOther = (saveFeature_args)other;
+      updateFeature_args typedOther = (updateFeature_args)other;
 
       lastComparison = Boolean.valueOf(isSetFeature()).compareTo(typedOther.isSetFeature());
       if (lastComparison != 0) {
@@ -3033,7 +3032,7 @@ public class Geospatial {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("saveFeature_args(");
+      StringBuilder sb = new StringBuilder("updateFeature_args(");
       boolean first = true;
 
       sb.append("feature:");
@@ -3071,15 +3070,15 @@ public class Geospatial {
       }
     }
 
-    private static class saveFeature_argsStandardSchemeFactory implements SchemeFactory {
-      public saveFeature_argsStandardScheme getScheme() {
-        return new saveFeature_argsStandardScheme();
+    private static class updateFeature_argsStandardSchemeFactory implements SchemeFactory {
+      public updateFeature_argsStandardScheme getScheme() {
+        return new updateFeature_argsStandardScheme();
       }
     }
 
-    private static class saveFeature_argsStandardScheme extends StandardScheme<saveFeature_args> {
+    private static class updateFeature_argsStandardScheme extends StandardScheme<updateFeature_args> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, saveFeature_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, updateFeature_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -3109,7 +3108,7 @@ public class Geospatial {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, saveFeature_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, updateFeature_args struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
@@ -3124,16 +3123,16 @@ public class Geospatial {
 
     }
 
-    private static class saveFeature_argsTupleSchemeFactory implements SchemeFactory {
-      public saveFeature_argsTupleScheme getScheme() {
-        return new saveFeature_argsTupleScheme();
+    private static class updateFeature_argsTupleSchemeFactory implements SchemeFactory {
+      public updateFeature_argsTupleScheme getScheme() {
+        return new updateFeature_argsTupleScheme();
       }
     }
 
-    private static class saveFeature_argsTupleScheme extends TupleScheme<saveFeature_args> {
+    private static class updateFeature_argsTupleScheme extends TupleScheme<updateFeature_args> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, saveFeature_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, updateFeature_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetFeature()) {
@@ -3146,7 +3145,7 @@ public class Geospatial {
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, saveFeature_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, updateFeature_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
@@ -3159,18 +3158,18 @@ public class Geospatial {
 
   }
 
-  public static class saveFeature_result implements org.apache.thrift.TBase<saveFeature_result, saveFeature_result._Fields>, java.io.Serializable, Cloneable   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("saveFeature_result");
+  public static class updateFeature_result implements org.apache.thrift.TBase<updateFeature_result, updateFeature_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("updateFeature_result");
 
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.BOOL, (short)0);
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new saveFeature_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new saveFeature_resultTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new updateFeature_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new updateFeature_resultTupleSchemeFactory());
     }
 
-    public boolean success; // required
+    public Feature success; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -3231,67 +3230,65 @@ public class Geospatial {
     }
 
     // isset id assignments
-    private static final int __SUCCESS_ISSET_ID = 0;
-    private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+          new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Feature.class)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(saveFeature_result.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(updateFeature_result.class, metaDataMap);
     }
 
-    public saveFeature_result() {
+    public updateFeature_result() {
     }
 
-    public saveFeature_result(
-      boolean success)
+    public updateFeature_result(
+      Feature success)
     {
       this();
       this.success = success;
-      setSuccessIsSet(true);
     }
 
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public saveFeature_result(saveFeature_result other) {
-      __isset_bitfield = other.__isset_bitfield;
-      this.success = other.success;
+    public updateFeature_result(updateFeature_result other) {
+      if (other.isSetSuccess()) {
+        this.success = new Feature(other.success);
+      }
     }
 
-    public saveFeature_result deepCopy() {
-      return new saveFeature_result(this);
+    public updateFeature_result deepCopy() {
+      return new updateFeature_result(this);
     }
 
     @Override
     public void clear() {
-      setSuccessIsSet(false);
-      this.success = false;
+      this.success = null;
     }
 
-    public boolean isSuccess() {
+    public Feature getSuccess() {
       return this.success;
     }
 
-    public saveFeature_result setSuccess(boolean success) {
+    public updateFeature_result setSuccess(Feature success) {
       this.success = success;
-      setSuccessIsSet(true);
       return this;
     }
 
     public void unsetSuccess() {
-      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+      this.success = null;
     }
 
     /** Returns true if field success is set (has been assigned a value) and false otherwise */
     public boolean isSetSuccess() {
-      return EncodingUtils.testBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+      return this.success != null;
     }
 
     public void setSuccessIsSet(boolean value) {
-      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SUCCESS_ISSET_ID, value);
+      if (!value) {
+        this.success = null;
+      }
     }
 
     public void setFieldValue(_Fields field, Object value) {
@@ -3300,7 +3297,7 @@ public class Geospatial {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((Boolean)value);
+          setSuccess((Feature)value);
         }
         break;
 
@@ -3310,7 +3307,7 @@ public class Geospatial {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case SUCCESS:
-        return Boolean.valueOf(isSuccess());
+        return getSuccess();
 
       }
       throw new IllegalStateException();
@@ -3333,21 +3330,21 @@ public class Geospatial {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof saveFeature_result)
-        return this.equals((saveFeature_result)that);
+      if (that instanceof updateFeature_result)
+        return this.equals((updateFeature_result)that);
       return false;
     }
 
-    public boolean equals(saveFeature_result that) {
+    public boolean equals(updateFeature_result that) {
       if (that == null)
         return false;
 
-      boolean this_present_success = true;
-      boolean that_present_success = true;
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
       if (this_present_success || that_present_success) {
         if (!(this_present_success && that_present_success))
           return false;
-        if (this.success != that.success)
+        if (!this.success.equals(that.success))
           return false;
       }
 
@@ -3359,13 +3356,13 @@ public class Geospatial {
       return 0;
     }
 
-    public int compareTo(saveFeature_result other) {
+    public int compareTo(updateFeature_result other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
 
       int lastComparison = 0;
-      saveFeature_result typedOther = (saveFeature_result)other;
+      updateFeature_result typedOther = (updateFeature_result)other;
 
       lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(typedOther.isSetSuccess());
       if (lastComparison != 0) {
@@ -3394,11 +3391,15 @@ public class Geospatial {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("saveFeature_result(");
+      StringBuilder sb = new StringBuilder("updateFeature_result(");
       boolean first = true;
 
       sb.append("success:");
-      sb.append(this.success);
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
+      }
       first = false;
       sb.append(")");
       return sb.toString();
@@ -3407,6 +3408,9 @@ public class Geospatial {
     public void validate() throws org.apache.thrift.TException {
       // check for required fields
       // check for sub-struct validity
+      if (success != null) {
+        success.validate();
+      }
     }
 
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
@@ -3419,23 +3423,21 @@ public class Geospatial {
 
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
       try {
-        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
-        __isset_bitfield = 0;
         read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
       } catch (org.apache.thrift.TException te) {
         throw new java.io.IOException(te);
       }
     }
 
-    private static class saveFeature_resultStandardSchemeFactory implements SchemeFactory {
-      public saveFeature_resultStandardScheme getScheme() {
-        return new saveFeature_resultStandardScheme();
+    private static class updateFeature_resultStandardSchemeFactory implements SchemeFactory {
+      public updateFeature_resultStandardScheme getScheme() {
+        return new updateFeature_resultStandardScheme();
       }
     }
 
-    private static class saveFeature_resultStandardScheme extends StandardScheme<saveFeature_result> {
+    private static class updateFeature_resultStandardScheme extends StandardScheme<updateFeature_result> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, saveFeature_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, updateFeature_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -3446,8 +3448,9 @@ public class Geospatial {
           }
           switch (schemeField.id) {
             case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
-                struct.success = iprot.readBool();
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.success = new Feature();
+                struct.success.read(iprot);
                 struct.setSuccessIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -3464,13 +3467,13 @@ public class Geospatial {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, saveFeature_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, updateFeature_result struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.isSetSuccess()) {
+        if (struct.success != null) {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-          oprot.writeBool(struct.success);
+          struct.success.write(oprot);
           oprot.writeFieldEnd();
         }
         oprot.writeFieldStop();
@@ -3479,16 +3482,16 @@ public class Geospatial {
 
     }
 
-    private static class saveFeature_resultTupleSchemeFactory implements SchemeFactory {
-      public saveFeature_resultTupleScheme getScheme() {
-        return new saveFeature_resultTupleScheme();
+    private static class updateFeature_resultTupleSchemeFactory implements SchemeFactory {
+      public updateFeature_resultTupleScheme getScheme() {
+        return new updateFeature_resultTupleScheme();
       }
     }
 
-    private static class saveFeature_resultTupleScheme extends TupleScheme<saveFeature_result> {
+    private static class updateFeature_resultTupleScheme extends TupleScheme<updateFeature_result> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, saveFeature_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, updateFeature_result struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetSuccess()) {
@@ -3496,16 +3499,17 @@ public class Geospatial {
         }
         oprot.writeBitSet(optionals, 1);
         if (struct.isSetSuccess()) {
-          oprot.writeBool(struct.success);
+          struct.success.write(oprot);
         }
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, saveFeature_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, updateFeature_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
-          struct.success = iprot.readBool();
+          struct.success = new Feature();
+          struct.success.read(iprot);
           struct.setSuccessIsSet(true);
         }
       }

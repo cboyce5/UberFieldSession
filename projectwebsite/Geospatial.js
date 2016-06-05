@@ -366,7 +366,7 @@ geospatial.thrift.Geospatial_getFeaturesInRect_result.prototype.write = function
   return;
 };
 
-geospatial.thrift.Geospatial_saveFeature_args = function(args) {
+geospatial.thrift.Geospatial_updateFeature_args = function(args) {
   this.feature = null;
   if (args) {
     if (args.feature !== undefined) {
@@ -374,8 +374,8 @@ geospatial.thrift.Geospatial_saveFeature_args = function(args) {
     }
   }
 };
-geospatial.thrift.Geospatial_saveFeature_args.prototype = {};
-geospatial.thrift.Geospatial_saveFeature_args.prototype.read = function(input) {
+geospatial.thrift.Geospatial_updateFeature_args.prototype = {};
+geospatial.thrift.Geospatial_updateFeature_args.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
@@ -408,8 +408,8 @@ geospatial.thrift.Geospatial_saveFeature_args.prototype.read = function(input) {
   return;
 };
 
-geospatial.thrift.Geospatial_saveFeature_args.prototype.write = function(output) {
-  output.writeStructBegin('Geospatial_saveFeature_args');
+geospatial.thrift.Geospatial_updateFeature_args.prototype.write = function(output) {
+  output.writeStructBegin('Geospatial_updateFeature_args');
   if (this.feature !== null && this.feature !== undefined) {
     output.writeFieldBegin('feature', Thrift.Type.STRUCT, 1);
     this.feature.write(output);
@@ -420,7 +420,7 @@ geospatial.thrift.Geospatial_saveFeature_args.prototype.write = function(output)
   return;
 };
 
-geospatial.thrift.Geospatial_saveFeature_result = function(args) {
+geospatial.thrift.Geospatial_updateFeature_result = function(args) {
   this.success = null;
   if (args) {
     if (args.success !== undefined) {
@@ -428,8 +428,8 @@ geospatial.thrift.Geospatial_saveFeature_result = function(args) {
     }
   }
 };
-geospatial.thrift.Geospatial_saveFeature_result.prototype = {};
-geospatial.thrift.Geospatial_saveFeature_result.prototype.read = function(input) {
+geospatial.thrift.Geospatial_updateFeature_result.prototype = {};
+geospatial.thrift.Geospatial_updateFeature_result.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
@@ -443,8 +443,9 @@ geospatial.thrift.Geospatial_saveFeature_result.prototype.read = function(input)
     switch (fid)
     {
       case 0:
-      if (ftype == Thrift.Type.BOOL) {
-        this.success = input.readBool();
+      if (ftype == Thrift.Type.STRUCT) {
+        this.success = new ttypes.Feature();
+        this.success.read(input);
       } else {
         input.skip(ftype);
       }
@@ -461,11 +462,11 @@ geospatial.thrift.Geospatial_saveFeature_result.prototype.read = function(input)
   return;
 };
 
-geospatial.thrift.Geospatial_saveFeature_result.prototype.write = function(output) {
-  output.writeStructBegin('Geospatial_saveFeature_result');
+geospatial.thrift.Geospatial_updateFeature_result.prototype.write = function(output) {
+  output.writeStructBegin('Geospatial_updateFeature_result');
   if (this.success !== null && this.success !== undefined) {
-    output.writeFieldBegin('success', Thrift.Type.BOOL, 0);
-    output.writeBool(this.success);
+    output.writeFieldBegin('success', Thrift.Type.STRUCT, 0);
+    this.success.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -690,23 +691,23 @@ geospatial.thrift.GeospatialClient.prototype.recv_getFeaturesInRect = function(i
   }
   return callback('getFeaturesInRect failed: unknown result');
 };
-geospatial.thrift.GeospatialClient.prototype.saveFeature = function(feature, callback) {
+geospatial.thrift.GeospatialClient.prototype.updateFeature = function(feature, callback) {
   this.seqid += 1;
   this._reqs[this.seqid] = callback;
-  this.send_saveFeature(feature);
+  this.send_updateFeature(feature);
 };
 
-geospatial.thrift.GeospatialClient.prototype.send_saveFeature = function(feature) {
+geospatial.thrift.GeospatialClient.prototype.send_updateFeature = function(feature) {
   var output = new this.pClass(this.output);
-  output.writeMessageBegin('saveFeature', Thrift.MessageType.CALL, this.seqid);
-  var args = new geospatial.thrift.Geospatial_saveFeature_args();
+  output.writeMessageBegin('updateFeature', Thrift.MessageType.CALL, this.seqid);
+  var args = new geospatial.thrift.Geospatial_updateFeature_args();
   args.feature = feature;
   args.write(output);
   output.writeMessageEnd();
   return this.output.flush();
 };
 
-geospatial.thrift.GeospatialClient.prototype.recv_saveFeature = function(input,mtype,rseqid) {
+geospatial.thrift.GeospatialClient.prototype.recv_updateFeature = function(input,mtype,rseqid) {
   var callback = this._reqs[rseqid] || function() {};
   delete this._reqs[rseqid];
   if (mtype == Thrift.MessageType.EXCEPTION) {
@@ -715,14 +716,14 @@ geospatial.thrift.GeospatialClient.prototype.recv_saveFeature = function(input,m
     input.readMessageEnd();
     return callback(x);
   }
-  var result = new geospatial.thrift.Geospatial_saveFeature_result();
+  var result = new geospatial.thrift.Geospatial_updateFeature_result();
   result.read(input);
   input.readMessageEnd();
 
   if (null !== result.success) {
     return callback(null, result.success);
   }
-  return callback('saveFeature failed: unknown result');
+  return callback('updateFeature failed: unknown result');
 };
 geospatial.thrift.GeospatialClient.prototype.deleteFeature = function(feature, callback) {
   this.seqid += 1;
@@ -815,13 +816,13 @@ geospatial.thrift.GeospatialProcessor.prototype.process_getFeaturesInRect = func
   })
 }
 
-geospatial.thrift.GeospatialProcessor.prototype.process_saveFeature = function(seqid, input, output) {
-  var args = new geospatial.thrift.Geospatial_saveFeature_args();
+geospatial.thrift.GeospatialProcessor.prototype.process_updateFeature = function(seqid, input, output) {
+  var args = new geospatial.thrift.Geospatial_updateFeature_args();
   args.read(input);
   input.readMessageEnd();
-  this._handler.saveFeature(args.feature, function (err, result) {
-    var result = new geospatial.thrift.Geospatial_saveFeature_result((err != null ? err : {success: result}));
-    output.writeMessageBegin("saveFeature", Thrift.MessageType.REPLY, seqid);
+  this._handler.updateFeature(args.feature, function (err, result) {
+    var result = new geospatial.thrift.Geospatial_updateFeature_result((err != null ? err : {success: result}));
+    output.writeMessageBegin("updateFeature", Thrift.MessageType.REPLY, seqid);
     result.write(output);
     output.writeMessageEnd();
     output.flush();

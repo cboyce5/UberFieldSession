@@ -44,7 +44,11 @@ public class GeospatialHandler implements Geospatial.Iface {
         PreparedStatement stmt = s.prepare("select * from feature where feature_id = ?");
         BoundStatement bstmt = new BoundStatement(stmt);
 
-        bstmt.bind(UUID.fromString(id));
+        try {
+            bstmt.bind(UUID.fromString(id));
+        } catch (Exception e) {
+            return null;
+        }
 
         ResultSet result = s.execute(bstmt);
         Row r = result.one();
@@ -99,7 +103,7 @@ public class GeospatialHandler implements Geospatial.Iface {
     }
 
     @Override
-    public boolean saveFeature(Feature feature) throws TException {
+    public Feature updateFeature(Feature feature) throws TException {
         // update feature where feature_id = feature.getId();
         Session s = Database.getSession();
         Feature featureOld = getFeature(feature.getId());
@@ -109,7 +113,10 @@ public class GeospatialHandler implements Geospatial.Iface {
             deleteFeature(featureOld);
             stmt = s.prepare("insert into feature (grid, feature_id, payload, point_x, point_y, state) values (?, ?, ?, ?, ?, ?)");
             bstmt = new BoundStatement(stmt);
-            bstmt.bind(GridUtil.pointToQuadKey(feature.getPoint()), UUID.fromString(feature.getId()), feature.getPayload(),
+
+            feature.grid = GridUtil.pointToQuadKey(feature.getPoint());
+
+            bstmt.bind(feature.getGrid(), UUID.fromString(feature.getId()), feature.getPayload(),
                     feature.getPoint().getX(), feature.getPoint().getY(), FeatureState.CLEAN.getValue());
         } else {
             stmt = s.prepare("update feature set point_x = ?, point_y = ?, payload = ?, state = ? where grid = ? and feature_id = ?");
@@ -120,7 +127,7 @@ public class GeospatialHandler implements Geospatial.Iface {
 
         producer.produce("geospatial", feature.getId());
 
-        return true;
+        return feature;
     }
 
     @Override

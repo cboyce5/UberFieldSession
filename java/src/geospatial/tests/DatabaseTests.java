@@ -77,14 +77,14 @@ public class DatabaseTests {
             testUUID = f.getId();
             f.setPoint(new Point(15, 15));
             f.setPayload("{00}");
-            assertTrue(handler.saveFeature(f));
+            assertNotEquals(null, handler.updateFeature(f));
             f = handler.getFeature(testUUID);
             assertEquals(new Point(15, 15), f.getPoint());
             assertEquals("{00}", f.getPayload());
 
 
             f.setPayload("{69}");
-            assertTrue(handler.saveFeature(f));
+            assertNotEquals(null, handler.updateFeature(f));
             f = handler.getFeature(testUUID);
             assertEquals("{69}", f.getPayload());
 
