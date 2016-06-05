@@ -1,6 +1,7 @@
 var thrift = require('thrift');
 var express = require('express');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+var nodeKafkaBridgeClient = require('./node-kafka-bridge-client');
 
 var app = express();
     app.use(bodyParser.json());       // to support JSON-encoded bodies
@@ -10,6 +11,13 @@ var app = express();
 
 
 var expressWs = require('express-ws')(app);
+
+nodeKafkaBridgeClient(function(msg) {
+    expressWs.getWss('/kafka').clients.forEach(function(client) {
+        client.send(msg.toString());
+    })
+});
+
 
 var Geospatial = require('./Geospatial');
 var ttypes = require('./geospatial_types');
@@ -24,6 +32,9 @@ var connection = thrift.createConnection("localhost", 9090, {
 
 var client = thrift.createClient(Geospatial, connection);
 
+
+app.use(express.static('pub'));
+
 app.get('/', function(req, res) {
    res.sendfile('pub/index.html', {root: __dirname});
 });
@@ -36,7 +47,6 @@ app.get('/feature/:id', function(req, res) {
 
 app.post('/features', function(req, res) {
     if(req.body.point.x && req.body.point.y) {
-        console.log(req.body.point.x);
         client.createFeature(new ttypes.Point({x: parseFloat(req.body.point.x), y: parseFloat(req.body.point.y)}), req.body.payload, function(err, feature) {
             res.json(feature);
         });
@@ -48,8 +58,6 @@ app.get('/features/:topLeftX,:topLeftY/:btmRightX,:btmRightY', function(req, res
 
     rect.top_lt = new ttypes.Point({x: parseFloat(req.params.topLeftX), y: parseFloat(req.params.topLeftY)});
     rect.btm_rt = new ttypes.Point({x: parseFloat(req.params.btmRightX), y: parseFloat(req.params.btmRightY)});
-
-    console.log('getting for rect: ' + rect.top_lt.x + " " + rect.top_lt.y + " " + rect.btm_rt.x + " " + rect.btm_rt.y);
 
     client.getFeaturesInRect(rect, function(err, features) {
         res.json(features);
@@ -102,6 +110,23 @@ app.delete('/feature/:id', function(req, res) {
     });
 });
 
+app.ws('/kafka', function(ws, req) {
+    // should do verification for security in a production environment
+    ws.on('message', function(msg) {
+        // noop
+    });
+});
+
 app.listen(8080, function() {
    console.log('Web Server Started.');
 });
+
+function guid() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+}

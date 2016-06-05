@@ -4,19 +4,16 @@ var kafka = require('kafka-node'),
 var connections = {};
 
 var server = net.createServer(function(connection) {
-    console.log('client connected');
-
     connection.guid = guid();
     connections[connection.guid] = connection;
 
     connection.on('end', function() {
-        console.log('client disconnected: ' + connection.guid);
         delete connections[connection.guid];
     });
 });
 
 server.listen(6969, function() {
-    console.log('Kafka Bridge started');
+    console.log('Kafka Bridge started.');
 });
 
 Consumer = kafka.Consumer,
@@ -34,6 +31,7 @@ Consumer = kafka.Consumer,
 consumer.on('message', function (message) {
     for(var guid in connections) {
         if(connections.hasOwnProperty(guid)) {
+            console.log(message.value);
             connections[guid].write(message.value);
         }
     }
