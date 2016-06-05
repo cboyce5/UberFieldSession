@@ -143,9 +143,7 @@
                     title,
                     description
             ));
-
-
-
+            
 
             map.addListener('zoom_changed', function() {
 
@@ -271,8 +269,7 @@
             marker = new google.maps.Marker({
                 position: event.latLng,
                 map: map,
-                title: title,
-                description: description
+                title: "Please zoom in to edit/view data",
             });
 
 
@@ -295,9 +292,11 @@
 
         function saveOverData() {
 
+
             var title = document.getElementById("titleTextEditor").value;
             var description = document.getElementById("descriptionTextEditor").value;
             var currentID = document.getElementById("id-value").value;
+
             console.log("fuck");
             for (var i = 0; i < overlays.length; i++) {
                 if (overlays[i].getID() == currentID) {
@@ -305,6 +304,9 @@
                     overlays[i].setValues(title, description);
                 }
             }
+
+
+
             document.getElementById("right-sidebar").style.display = 'none';
         }
 
