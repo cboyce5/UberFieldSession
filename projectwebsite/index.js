@@ -39,12 +39,18 @@ app.get('/', function(req, res) {
    res.sendfile('pub/index.html', {root: __dirname});
 });
 
+
+// Get Feature
 app.get('/feature/:id', function(req, res) {
     client.getFeature(req.params.id, function(error, feature) {
-        res.json(feature);
+        if(feature)
+            res.json(feature);
+        else
+            res.json({});
     });
 });
 
+// Create Feature
 app.post('/features', function(req, res) {
     if(req.body.point.x && req.body.point.y) {
         client.createFeature(new ttypes.Point({x: parseFloat(req.body.point.x), y: parseFloat(req.body.point.y)}), req.body.payload, function(err, feature) {
@@ -53,6 +59,7 @@ app.post('/features', function(req, res) {
     }
 });
 
+// Get Features in Rectangle
 app.get('/features/:topLeftX,:topLeftY/:btmRightX,:btmRightY', function(req, res) {
     var rect = new ttypes.Rectangle();
 
@@ -60,10 +67,14 @@ app.get('/features/:topLeftX,:topLeftY/:btmRightX,:btmRightY', function(req, res
     rect.btm_rt = new ttypes.Point({x: parseFloat(req.params.btmRightX), y: parseFloat(req.params.btmRightY)});
 
     client.getFeaturesInRect(rect, function(err, features) {
-        res.json(features);
+        if(features)
+            res.json(features);
+        else
+            res.json([]);
     });
 });
 
+// update Feature by id
 app.put('/feature/:id', function(req, res) {
     /*
         Required params in put:
@@ -81,13 +92,15 @@ app.put('/feature/:id', function(req, res) {
         payload: req.body.payload
     });
 
-
-    client.saveFeature(feature, function(err, result) {
-        res.json({'status': result ? 'success' : 'fail'});
+    client.updateFeature(feature, function(err, feature) {
+        if(feature)
+            res.json(feature);
+        else
+            res.json({});
     })
 });
 
-
+// Delete feature by id
 app.delete('/feature/:id', function(req, res) {
     /*
          Required params in put:
@@ -112,9 +125,9 @@ app.delete('/feature/:id', function(req, res) {
 
 app.ws('/kafka', function(ws, req) {
     // should do verification for security in a production environment
-    ws.on('message', function(msg) {
+    /*ws.on('message', function(msg) {
         // noop
-    });
+    });*/
 });
 
 app.listen(8080, function() {

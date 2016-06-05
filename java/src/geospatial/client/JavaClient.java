@@ -84,14 +84,14 @@ public class JavaClient {
 				List<Feature> features = client.getFeaturesInRect(rect);
 				break;
 			case 4:
-				boolean saveSuccess = client.saveFeature(currentFeature);
+				/*boolean saveSuccess = client.saveFeature(currentFeature);
 				if (saveSuccess) {
 					System.out.println("Your feature was saved successfully.");
 				}
 				else {
 					System.out.println("Your feature was saved unsuccessfully.");
 				}
-				break;
+				break;*/
 			case 5:
 				boolean deleteSuccess = client.deleteFeature(currentFeature);
 				if (deleteSuccess) {

@@ -5,14 +5,13 @@
     <title>Big Aeriolas</title>
 </head>
 <body>
-    <script src="geospatial_types.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="geospatialapi.js"></script>
     <script>
         GeospatialAPI.init();
-        GeospatialAPI.onFeaturesUpdated = function() {
-            console.log('shit');
-            // redraw the features on your map that were updated
-        }
+
+
+        setTimeout(runFeatureTests, 1000);
     </script>
 </body>
 </html>

@@ -33,6 +33,6 @@ service Geospatial {
     Feature createFeature(1: Point point, 2: JSON payload) // creates a new feature at a point with a payload
     Feature getFeature(1: FeatureID id) // gets feature by id
     list<Feature> getFeaturesInRect(1: Rectangle rect) // get a list of features that intersect a rectangle (uses quadkeys in background)
-    bool saveFeature(1: Feature feature) // saves a feature after making changes such as payload or moving to a different point, returns true if succeeds, false otherwise
+    Feature updateFeature(1: Feature feature) // saves a feature after making changes such as payload or moving to a different point, returns true if succeeds, false otherwise
     bool deleteFeature(1: Feature feature) // deletes a feature, returns true if successful, false otherwise
 }
