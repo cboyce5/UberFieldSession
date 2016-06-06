@@ -93,10 +93,14 @@ public class GeospatialHandler implements Geospatial.Iface {
         Iterator<Row> iterator = results.iterator();
 
         Row r;
-        while((r = iterator.next()) != null) {
-            if(GridUtil.pointInRect(rect, new Point(r.getDouble("point_x"), r.getDouble("point_y")))) {
-                retList.add(rowToFeature(r));
+        if(iterator.hasNext()) {
+            while((r = iterator.next()) != null) {
+                if(GridUtil.pointInRect(rect, new Point(r.getDouble("point_x"), r.getDouble("point_y")))) {
+                    retList.add(rowToFeature(r));
+                }
             }
+        } else {
+            return null;
         }
 
         return retList;
