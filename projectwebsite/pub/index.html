@@ -228,12 +228,17 @@
                         })
                     });
 
+                    console.log("amihere")
+                    overlays.hide(); //failing here
                     overlays[i].remove();
+                    overlays.splice(i, 1);
                 }
             }
         }
         document.getElementById('right-sidebar').style.display = 'none';
     }
+
+
     function drawAllMarkers() {
 
 
