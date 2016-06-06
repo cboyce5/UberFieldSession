@@ -90,8 +90,8 @@ var GeospatialAPI = function() {
             if(!btm_rt.y)
                 btm_rt.y = -90;
 
-
-            $.get('/features/' + top_lt.x + ',' + top_lt.y +'/' + btm_rt.x + ',' + btm_rt.y, function(features) {
+            console.log(top_lt.x + ',' + top_lt.y +'/' + btm_rt.x + ',' + btm_rt.y);
+            $.get('/features/' + top_lt.x + ',' + top_lt.y + '/' + btm_rt.x + ',' + btm_rt.y, function(features) {
                 if(cb)
                     cb(features);
                 console.log(features);
