@@ -5,7 +5,7 @@ case $1 in
     start)
         echo "Starting $SERVICE_NAME ..."
         if [ ! -f $PID_PATH_NAME ]; then
-            nohup java -jar /var/uber/geospatial.jar 2>&1 & echo $! > $PID_PATH_NAME
+            nohup java -jar /var/uber/UberFieldSession/java/out/artifacts/geospatial_jar/geospatial.jar 2>&1 & echo $! > $PID_PATH_NAME
             echo "$SERVICE_NAME started ..."
         else
             echo "$SERVICE_NAME is already running ..."
@@ -30,7 +30,7 @@ case $1 in
             echo "$SERVICE_NAME stopped ...";
             rm $PID_PATH_NAME
             echo "$SERVICE_NAME starting ..."
-            nohup java -jar /var/uber/geospatial.jar 2>&1 & echo $! > $PID_PATH_NAME
+            nohup java -jar /var/uber/UberFieldSession/java/out/artifacts/geospatial_jar/geospatial.jar 2>&1 & echo $! > $PID_PATH_NAME
             echo "$SERVICE_NAME started ..."
         else
             echo "$SERVICE_NAME is not running ..."
