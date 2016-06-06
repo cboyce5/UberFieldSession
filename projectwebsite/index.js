@@ -33,7 +33,7 @@ var connection = thrift.createConnection("localhost", 9090, {
 var client = thrift.createClient(Geospatial, connection);
 
 
-app.use(express.static('pub'));
+app.use(express.static(__dirname + '/pub'));
 
 app.get('/', function(req, res) {
    res.sendfile('pub/index.html', {root: __dirname});
