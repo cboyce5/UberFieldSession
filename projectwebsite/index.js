@@ -133,13 +133,3 @@ app.ws('/kafka', function(ws, req) {
 app.listen(8080, function() {
    console.log('Web Server Started.');
 });
-
-function guid() {
-    function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-        s4() + '-' + s4() + s4() + s4();
-}
