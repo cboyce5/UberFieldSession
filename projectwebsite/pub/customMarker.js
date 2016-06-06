@@ -28,7 +28,6 @@ CustomMarker.prototype.draw = function() {
 		div_description.innerHTML= this.description;
 
 		var div_pointer = document.createElement('div');
-		div_pointer.innerHTML= this.args.marker_id;
 		div_pointer.className = 'triangle-with-shadow', 'triangle-with-shadow:after';
 
 
@@ -45,14 +44,14 @@ CustomMarker.prototype.draw = function() {
 			div.dataset.marker_id = self.args.marker_id;
 		}
 
+		var self = this;
+
 		google.maps.event.addDomListener(div, "click", function() {
 			//alert('You clicked on a custom marker!');
 			//google.maps.event.trigger(self, "click");
-			//this.prototype.toggle();
-			//this.args.rightSidebar
-			document.getElementById("titleTextEditor").value = div.childNodes[1].innerHTML;
-			document.getElementById("descriptionTextEditor").value = div.childNodes[2].innerHTML;
-			document.getElementById("id-value").value = div.childNodes[0].innerHTML;
+			document.getElementById("titleTextEditor").value = self.title;
+			document.getElementById("descriptionTextEditor").value = self.description;
+			document.getElementById("id-value").value = self.args.marker_id;
 			var div1 = document.getElementById('right-sidebar');
 			if (div1.style.display !== 'none') {
 				div1.style.display = 'none';

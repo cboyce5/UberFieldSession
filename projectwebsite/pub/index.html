@@ -102,7 +102,9 @@
 
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBORoljxV99j1KvcO2mkD4BNNuAPanaZtE&libraries=drawing"></script>
-    <script type="text/javascript" src="js/customMarker.js"></script>
+    <script type="text/javascript" src="customMarker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="geospatialapi.js"></script>
     <script type="text/javascript">
         var poly;
         var map;
@@ -120,7 +122,8 @@
                 zoom: 13,
             });
 
-            marker = new google.maps.Marker({
+
+/*            marker = new google.maps.Marker({
                 position: myLatLng,
                 map: map,
                 title: 'this is some draggable shtuff',
@@ -143,12 +146,10 @@
                     title,
                     description
             ));
-            
 
+*/
             map.addListener('zoom_changed', function() {
-
                 var oLength = overlays.length;
-
                 if (map.getZoom() >= 15) {
                     for (var i = 0; i < oLength; i++) {
                         overlays[i].show();
@@ -159,30 +160,11 @@
                     }
                 }
             });
-/*
-            poly = new google.maps.Polyline({
-                strokeColor: '#000000',
-                strokeOpacity: 1.0,
-                strokeWeight: 3
+
+            map.addListener('idle', function() {
+                getCornerPoints();
             });
-            poly.setMap(map);
-            */
 
-            // Create a <script> tag and set the USGS URL as the source.
-            //var script = document.createElement('script');
-            // (In this example we use a locally stored copy instead.)
-            // script.src = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp';
-            //script.src = '/maps/documentation/javascript/tutorials/js/earthquake_GeoJSONP.js';
-            //document.getElementsByTagName('head')[0].appendChild(script);
-
-            //TO DO THE STUFF ABOVE
-
-
-
-            // Add a listener for the click event
-            // map.addListener('click', addLatLng);
-            //map.addListener('click', addMarker);
-            //map.addListener('click', sizeObjects);
         }
 
         google.maps.event.addDomListener(window, 'load', initMap);
@@ -192,45 +174,49 @@
         }
 
 
-            function loadMarkersFromServer() {
-                //loop through the JSON shit to populate map with markers
-                marker = new google.maps.Marker({
-                    position: {lat: 39.75, lng: -105.22},
-                    map: map,
-                    title: 'title', //read in title id you slut
-                    description: 'hi,' // read in description
-                })
-
-
-            }
-
-
-            function getCornerPoints() {
-
-                var bounds = map.getBounds();
-
-                var NECorner = bounds.getNorthEast();
-                var SWCorner = bounds.getSouthWest();
-
-                var corner1 = new google.maps.LatLng(NECorner.lat(), NECorner.lng());
-                var corner2 = new google.maps.LatLng(NECorner.lat(), SWCorner.lng());
-                var corner3 = new google.maps.LatLng(SWCorner.lat(), SWCorner.lng());
-                var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
-                /*
-             var polygon = new google.maps.Polygon({
-             map: map,
-             paths: [corner1, corner2, corner3, corner4],
-             fillColor: 'red',
-             fillOpacity: 0.7
-             });
-             */
-                console.log(corner1.toString(), '\n', corner2.toString(), '\n', corner3.toString(), '\n', corner4.toString());
+        function loadMarkersFromServer() {
+            //loop through the JSON shit to populate map with markers
+            marker = new google.maps.Marker({
+                position: {lat: 39.75, lng: -105.22},
+                map: map,
+                title: 'title', //read in title id you slut
+                description: 'hi,' // read in description
+            })
 
         }
 
-            function showDiv() {
-            var
-                    div = document.getElementById('drop-down');
+
+        function getCornerPoints() {
+
+            var bounds = map.getBounds();
+
+            var NECorner = bounds.getNorthEast();
+            var SWCorner = bounds.getSouthWest();
+
+            var corner1 = new google.maps.LatLng(NECorner.lat(), NECorner.lng());
+            var corner2 = new google.maps.LatLng(NECorner.lat(), SWCorner.lng());
+            var corner3 = new google.maps.LatLng(SWCorner.lat(), SWCorner.lng());
+            var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
+            /*
+         var polygon = new google.maps.Polygon({
+         map: map,
+         paths: [corner1, corner2, corner3, corner4],
+         fillColor: 'red',
+         fillOpacity: 0.7
+         });
+         */
+
+            //console.log(corner1.toString(), '\n', corner2.toString(), '\n', corner3.toString(), '\n', corner4.toString());
+
+            GeospatialAPI.getFeaturesInRect({x: corner4.lng(), y: corner4.lat()}, {x: corner2.lng(), y: corner2.lat()}, function(feature) {
+                console.log(feature);
+                console.log(feature.id);
+            });
+
+        }
+
+        function showDiv() {
+            var div = document.getElementById('drop-down');
             if (div.style.display !== 'none') {
                 div.style.display = 'none';
             }
@@ -264,7 +250,12 @@
         function addMarker(event) {
             var title = document.getElementById("titleText").value;
             var description = document.getElementById("descriptionText").value;
-
+            console.log(event.latLng.lat());
+            GeospatialAPI.createFeature({x: event.latLng.lng(), y: event.latLng.lat()}, {title: title, description: description},function(feature) {
+                GeospatialAPI.getFeature(feature.id, function(feature) {
+                    console.log('got my feature that i just created: ' + feature.id);
+                })
+            });
 
             marker = new google.maps.Marker({
                 position: event.latLng,
@@ -277,7 +268,7 @@
                     event.latLng,
                     map,
                     {
-                        marker_id: '345',
+                        marker_id: feature.id,
                         rightSidebar: document.getElementById('right-sidebar')
                     },
                     title,
