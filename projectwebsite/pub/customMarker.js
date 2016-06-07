@@ -119,9 +119,10 @@ CustomMarker.prototype.getID = function() {
 
 
 CustomMarker.prototype.setValues = function(title, description) {
+	var self = this;
 	console.log(title);
-	this.title = title;
-	this.description = description;
-	this.div.childNodes[1].innerHTML = this.title;
-	this.div.childNodes[2].innerHTML = this.description;
+	self.title = title;
+	self.description = description;
+	self.div.childNodes[1].innerHTML = this.title;
+	self.div.childNodes[2].innerHTML = this.description;
 };

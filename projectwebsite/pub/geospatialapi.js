@@ -35,6 +35,7 @@ var GeospatialAPI = function() {
     var ws = null;
     return {
         init: function() {
+            var self = this;
             if ("WebSocket" in window) {
                 console.log('creating ws');
                 ws = new WebSocket('ws://'+window.location.host+'/kafka');
@@ -44,12 +45,15 @@ var GeospatialAPI = function() {
                 }.bind(ws);
 
                 ws.onmessage = function (evt)  {
-                    var received_msg = evt.data;
-                    console.log(received_msg);
+                    self.onUpdateReceived(evt.data);
                 };
             } else {
                 alert("WebSocket NOT supported by your Browser!");
             }
+        },
+
+        onUpdateReceived: function(data) {
+            console.log('this needs to be implemented - received: ' + data);
         },
 
         createFeature: function(point, payload, cb) {
@@ -64,6 +68,9 @@ var GeospatialAPI = function() {
 
             }
             $.post('/features', {point: point, payload: payload}, function(feature) {
+                if(feature && feature.payload) {
+                    feature.payload = JSON.parse(feature.payload);
+                }
                 if(cb)
                     cb(feature);
             });
@@ -90,11 +97,16 @@ var GeospatialAPI = function() {
             if(!btm_rt.y)
                 btm_rt.y = -90;
 
-            console.log(top_lt.x + ',' + top_lt.y +'/' + btm_rt.x + ',' + btm_rt.y);
+
             $.get('/features/' + top_lt.x + ',' + top_lt.y + '/' + btm_rt.x + ',' + btm_rt.y, function(features) {
+                if(features) {
+                    for(var i = 0; i < features.length; i++) {
+                        features[i].payload = JSON.parse(features[i].payload);
+                    }
+                }
+
                 if(cb)
                     cb(features);
-                console.log(features);
             })
         },
 
@@ -130,6 +142,8 @@ var GeospatialAPI = function() {
         }
     }
 }();
+
+GeospatialAPI.init();
 
 
 function runFeatureTests() {
