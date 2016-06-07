@@ -13,7 +13,10 @@ var app = express();
 var expressWs = require('express-ws')(app);
 
 nodeKafkaBridgeClient(function(msg) {
+    console.log(msg.toString());
+
     expressWs.getWss('/kafka').clients.forEach(function(client) {
+        console.log('sending message');
         client.send(msg.toString());
     })
 });
@@ -109,23 +112,35 @@ app.delete('/feature/:id', function(req, res) {
          * grid: quadkey - required in order to do look up in cassandra
      */
 
-    var feature = new ttypes.Feature({
-        grid: req.body.grid,
-        id: req.params.id,
-        point: new ttypes.Point({x: parseFloat(req.body.point.x), y: parseFloat(req.body.point.y)}),
-        state: parseInt(req.body.state) == 1 ? ttypes.FeatureState.CLEAN : ttypes.FeatureState.DIRTY,
-        payload: req.body.payload
-    });
+    if(
+        req.body.point &&
+        req.body.point.x &&
+        req.body.point.y &&
+        req.body.grid &&
+        req.body.state &&
+        req.body.payload
+    ) {
+        var feature = new ttypes.Feature({
+            grid: req.body.grid,
+            id: req.params.id,
+            point: new ttypes.Point({x: parseFloat(req.body.point.x), y: parseFloat(req.body.point.y)}),
+            state: parseInt(req.body.state) == 1 ? ttypes.FeatureState.CLEAN : ttypes.FeatureState.DIRTY,
+            payload: req.body.payload
+        });
 
-    client.deleteFeature(feature, function(err, result) {
-        res.json({'status': result ? 'success' : 'fail'});
-    });
+        client.deleteFeature(feature, function(err, result) {
+            res.json({'status': result ? 'success' : 'fail'});
+        });
+    } else {
+        res.json({'status': 'fail'});
+    }
+
 });
 
 app.ws('/kafka', function(ws, req) {
     // should do verification for security in a production environment
-    /*ws.on('message', function(msg) {
-        // noop
+   /* ws.on('message', function(msg) {
+    //noop
     });*/
 });
 
