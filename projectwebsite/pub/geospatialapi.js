@@ -98,12 +98,13 @@ var GeospatialAPI = function() {
                 btm_rt.y = -90;
 
 
-            $.get('/features/' + top_lt.x + ',' + top_lt.y +'/' + btm_rt.x + ',' + btm_rt.y, function(features) {
+            $.get('/features/' + top_lt.x + ',' + top_lt.y + '/' + btm_rt.x + ',' + btm_rt.y, function(features) {
                 if(features) {
                     for(var i = 0; i < features.length; i++) {
                         features[i].payload = JSON.parse(features[i].payload);
                     }
                 }
+
                 if(cb)
                     cb(features);
             })
