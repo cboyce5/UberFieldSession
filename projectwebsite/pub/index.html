@@ -1,453 +1,429 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/html">
 <link href = "main.css" rel="stylesheet" type="text/css"/>
-    <head>
-        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-        <meta charset="utf-8">
-        <title>Simple  for Uber</title>
-        <meta name="viewport" content="initial-scale=1.0">
-        <meta charset="utf-8">
-        <style>
-            html, body {
-                height: 100%;
-                margin: 0;
-                padding: 0;
-            }
-            #map {
-                height: 100%;
-            }
-        </style>
-    </head>
-    <body>
-    <div id="wrapper">
-        <div id="topBar">
-            <div id="title">
-                <h2>TOPFUCK</h2>
-            </div>
-            <div id="buttonBar">
-                <a href="#" class="myButton">Balls</a>
-                <a href="#" class="myButton">Fuck</a>
-                <a href="#" class="myButton">Touch me</a>
-                <a href="#" class="myButton">mmmmm</a>
-                <a href="#" class="myButton">pornhub.edu</a>
-                <a href="#" onclick="showDiv();" class="myButton">google maps </a>
-            </div>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Simple  for Uber</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper">
+    <div id="topBar">
+        <div id="title">
+            <h2>TOPBAR</h2>
         </div>
-
-        <!--
-        <div id="left-sidebar">
-            <h2> Hello </h2>
+        <div id="buttonBar">
+            <a href="#" class="myButton">RandomButton1</a>
+            <a href="#" class="myButton">RandomButton2</a>
+            <a href="#" class="myButton">RandomButton3</a>
+            <a href="#" class="myButton">RandomButton4</a>
+            <a href="#" class="myButton">RandomButton5</a>
+            <a href="#" onclick="showDiv();" class="myButton">Marker Creator</a>
         </div>
--->
-        <div id="mapContainer">
-            <div id="map">
-
-            </div>
-
-            <div id="randomtext">
-
-            </div>
-
-        </div>
-
-        <div id="drop-down" style="display:none;" class="answer_list" >
-            <div id="title-box">
-                <label>Title:</label>
-                <input type = "text"
-                       id = "titleText"
-                       value = "Please enter a title" />
-                <Label>Description:</Label>
-                <input type = "text"
-                       id = "descriptionText"
-                       value = "Please enter a description" />
-                <input type = "number" style="display:none;"
-                       id = "content-id"
-                       value = "0000000000" />
-                <input type = "text" style="display:none;"
-                       id = "content-point"
-                       value = "0,0" />
-                <input type = "text" style="display:none;"
-                       id = "content-type"
-                       value = "DIRTY" />
-            </div>
-            <div id="button-space">
-                <button onclick="createDataButton()">Create Marker</button>
-            </div>
-        </div>
-        <div id="right-sidebar" style="display:none;" class="editing_stuff" >
-            <div id="surrounding-outline">
-                <div id="title-editor">
-                    <label>Title:</label>
-                    <input type = "text"
-                           id = "titleTextEditor"
-                           value = "Please enter a description" />
-                </div>
-                <div id="description-editor">
-                    <Label>Description:</Label>
-                    <input type = "text"
-                           id = "descriptionTextEditor"
-                           value = "Please enter a title" />
-                </div>
-                <div id="button-holder">
-                        <button onclick="saveOverData()">Save</button>
-                        <input type = "text" disabled size="11"
-                           id = "id-value"
-                           value = "Please enter a title" />
-                        <button onclick="document.getElementById('right-sidebar').style.display = 'none'">Revert</button>
-                </div>
-            </div>
-        </div>
-
     </div>
-
-
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBORoljxV99j1KvcO2mkD4BNNuAPanaZtE&libraries=drawing"></script>
-    <script type="text/javascript" src="customMarker.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script src="geospatialapi.js"></script>
-    <script type="text/javascript">
-        var poly;
-        var map;
-        var marker;
-        var myLatLng;
-        var overlays = [];
-        var outSideArea = 0;
-
-        function initMap() {
-
-            myLatLng = {lat: 39.7555, lng: -105.2211};
-
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: myLatLng,
-                zoom: 13,
-            });
-
-
-/*            marker = new google.maps.Marker({
-                position: myLatLng,
-                map: map,
-                title: 'this is some draggable shtuff',
-                draggable: true
-            });
-
-
-
-            var title = "Here fuck";
-            var description = "super fuck";
-            var customLatLng = new google.maps.LatLng(39.7555, -105.2211);
-
-            overlays.push(new CustomMarker(
-                    customLatLng,
-                    map,
-                    {
-                        marker_id: '123',
-                        rightSidebar: document.getElementById('right-sidebar')
-                    },
-                    title,
-                    description
-            ));
-
-*/
-            map.addListener('zoom_changed', function() {
-                var oLength = overlays.length;
-                if (map.getZoom() >= 15) {
-                    for (var i = 0; i < oLength; i++) {
-                        overlays[i].show();
-                    }
-                } else {
-                    for (var i = 0; i < oLength; i++) {
-                        overlays[i].hide();
-                    }
-                }
-            });
-
-            map.addListener('idle', function() {
-                getCornerPoints();
-            });
-
-        }
-
-        google.maps.event.addDomListener(window, 'load', initMap);
-
-        function saveMarkersToServer() {
-
-        }
-
-
-        function loadMarkersFromServer() {
-            //loop through the JSON shit to populate map with markers
-            marker = new google.maps.Marker({
-                position: {lat: 39.75, lng: -105.22},
-                map: map,
-                title: 'title', //read in title id you slut
-                description: 'hi,' // read in description
-            })
-
-        }
-
-
-        function getCornerPoints() {
-
-            var bounds = map.getBounds();
-
-            var NECorner = bounds.getNorthEast();
-            var SWCorner = bounds.getSouthWest();
-
-            var corner1 = new google.maps.LatLng(NECorner.lat(), NECorner.lng());
-            var corner2 = new google.maps.LatLng(NECorner.lat(), SWCorner.lng());
-            var corner3 = new google.maps.LatLng(SWCorner.lat(), SWCorner.lng());
-            var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
-            /*
-         var polygon = new google.maps.Polygon({
-         map: map,
-         paths: [corner1, corner2, corner3, corner4],
-         fillColor: 'red',
-         fillOpacity: 0.7
-         });
-         */
-
-            //console.log(corner1.toString(), '\n', corner2.toString(), '\n', corner3.toString(), '\n', corner4.toString());
-
-            GeospatialAPI.getFeaturesInRect({x: corner4.lng(), y: corner4.lat()}, {x: corner2.lng(), y: corner2.lat()}, function(feature) {
-                console.log(feature);
-                console.log(feature.id);
-            });
-
-        }
-
-        function showDiv() {
-            var div = document.getElementById('drop-down');
-            if (div.style.display !== 'none') {
-                div.style.display = 'none';
-            }
-            else {
-                div.style.display = 'block';
-            }
-            getCornerPoints();
-            //loadMarkersFromServer();
-            //saveMarkersToServer();
-
-        }
-
-
-        // Handles click events on a map, and adds a new point to the Polyline.
-        function addLatLng(event) {
-            var path = poly.getPath();
-
-            // Because path is an MVCArray, we can simply append a new coordinate
-            // and it will automatically appear.
-            path.push(event.latLng);
-
-            // Add a new marker at the new plotted point on the polyline.
-            marker = new google.maps.Marker({
-                position: event.latLng,
-                title: '#' + path.getLength(),
-                map: map
-            });
-        }
-
-        //This places random markers on clicks
-        function addMarker(event) {
-            var title = document.getElementById("titleText").value;
-            var description = document.getElementById("descriptionText").value;
-            console.log(event.latLng.lat());
-            GeospatialAPI.createFeature({x: event.latLng.lng(), y: event.latLng.lat()}, {title: title, description: description},function(feature) {
-                GeospatialAPI.getFeature(feature.id, function(feature) {
-                    console.log('got my feature that i just created: ' + feature.id);
-                })
-            });
-
-            marker = new google.maps.Marker({
-                position: event.latLng,
-                map: map,
-                title: "Please zoom in to edit/view data",
-            });
-
-
-            overlays.push(new CustomMarker(
-                    event.latLng,
-                    map,
-                    {
-                        marker_id: feature.id,
-                        rightSidebar: document.getElementById('right-sidebar')
-                    },
-                    title,
-                    description
-            ));
-
-            clearListeners();
-
-            document.getElementById("titleText").value = "Please enter a title";
-            document.getElementById("descriptionText").value = "Please enter a description";
-        }
-
-        function saveOverData() {
-
-
-            var title = document.getElementById("titleTextEditor").value;
-            var description = document.getElementById("descriptionTextEditor").value;
-            var currentID = document.getElementById("id-value").value;
-
-            console.log("fuck");
-            for (var i = 0; i < overlays.length; i++) {
-                if (overlays[i].getID() == currentID) {
-                    console.log("fuck2");
-                    overlays[i].setValues(title, description);
-                }
-            }
-
-
-
-            document.getElementById("right-sidebar").style.display = 'none';
-        }
-
-        function sizeObjects() {
-
-            var drawingManager = new google.maps.drawing.DrawingManager({
-                drawingMode: google.maps.drawing.OverlayType.MARKER,
-                drawingControl: true,
-                drawingControlOptions: {
-                    position: google.maps.ControlPosition.TOP_CENTER,
-                    drawingModes: [
-                        google.maps.drawing.OverlayType.MARKER,
-                        google.maps.drawing.OverlayType.CIRCLE,
-                        google.maps.drawing.OverlayType.POLYGON,
-                        google.maps.drawing.OverlayType.POLYLINE,
-                        google.maps.drawing.OverlayType.RECTANGLE
-                    ]
-                },
-                markerOptions: {icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'},
-                circleOptions: {
-                    fillColor: '#ffff00',
-                    fillOpacity: 1,
-                    strokeWeight: 5,
-                    clickable: true,
-                    editable: true,
-                    zIndex: 1
-                },
-                rectangleOptions: {
-                    editable: true,
-                },
-                polylineOptions: {
-                    editable: true,
-                }
-
-            });
-            drawingManager.setMap(map);
-
-        }
-
-        function createDataButton() {
-            //send shit to server
-            showDiv();
-            map.addListener('click', addMarker);
-            //marker.setMap(null); for removing markers eventually
-        }
-
-        function toggleBounce() {
-            if (marker.getAnimation() !== null) {
-                marker.setAnimation(null);
-            } else {
-                marker.setAnimation(google.maps.Animation.BOUNCE);
-            }
-        }
-
-        function clearListeners() {
-            google.maps.event.clearListeners(map, 'click');
-            marker.addListener('click', toggleBounce);
-        }
-
-
-
-
-
-
-
-        // Loop through the results array and place a marker for each
-        // set of coordinates.
-        /*
-        window.eqfeed_callback = function(results) {
-            for (var i = 0; i < results.features.length; i++) {
-                var coords = results.features[i].geometry.coordinates;
-                var latLng = new google.maps.LatLng(coords[1],coords[0]);
-                var marker = new google.maps.Marker({
-                    position: latLng,
-                    map: map
-                });
-            }
-        }
-        google.maps.event.addDomListener(window, 'load', initialize)
-*/
-
-    </script>
-
-
-<!--
-    <script type="text/javascript" src="js/customMarker.js"></script>
-    <script type="text/javascript">
-
-        function initialize() {
-
-            var myLatlng = new google.maps.LatLng(-31.9546781,115.852662);
-
-            var mapOptions = {
-                zoom: 14,
-                center: myLatlng,
-                disableDefaultUI: true
-            }
-
-            var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
-            /*
-             // Example standard marker
-             var marker = new google.maps.Marker({
-             position: myLatlng,
-             map: map,
-             title: 'Hello World!'
-             });
-             */
-
-            overlay = new CustomMarker(
-                    myLatlng,
-                    map,
-                    {
-                        marker_id: '123'
-                    }
-            );
-        }
-
-        google.maps.event.addDomListener(window, 'load', initialize);
-
-    </script>
-
 
     <!--
+    <div id="left-sidebar">
+        <h2> Hello </h2>
+    </div>
+-->
+    <div id="mapContainer">
+        <div id="map">
 
-    <div class="out-div">
-        <div id="map" style="width: 400px; height: 300px"></div>
+        </div>
     </div>
 
-    <script type="text/javascript">
+    <div id="drop-down" style="display:none;" class="answer_list" >
+        <div id="title-box">
+            <label>Title:</label>
+            <input type = "text"
+                   id = "titleText"
+                   value = "Please enter a title" />
+            <Label>Description:</Label>
+            <input type = "text"
+                   id = "descriptionText"
+                   value = "Please enter a description" />
+            <input type = "number" style="display:none;"
+                   id = "content-id"
+                   value = "0000000000" />
+            <input type = "text" style="display:none;"
+                   id = "content-point"
+                   value = "0,0" />
+            <input type = "text" style="display:none;"
+                   id = "content-type"
+                   value = "DIRTY" />
+        </div>
+        <div id="button-space">
+            <button onclick="createDataButton()">Create Marker</button>
+        </div>
+    </div>
+    <div id="right-sidebar" style="display:none;" class="editing_stuff" >
+        <div id="surrounding-outline">
+            <div id="title-editor">
+                <label>Title:</label>
+                <input type = "text"
+                       id = "titleTextEditor"
+                       value = "Please enter a description" />
+            </div>
+            <div id="description-editor">
+                <Label>Description:</Label>
+                <input type = "text"
+                       id = "descriptionTextEditor"
+                       value = "Please enter a title" />
+            </div>
+            <div id="button-holder">
+                <button onclick="saveOverData()">Save</button>
+                <input type = "text" disabled size="11"
+                       id = "id-value"
+                       value = "Please enter a title" />
+                <button onclick="document.getElementById('right-sidebar').style.display = 'none'">Revert</button>
+            </div>
+            <button onclick="deleteMarker()">Delete</button>
+            <button onclick="drawAllMarkers()">Redraw Testing Button</button>
+        </div>
+    </div>
+</div>
 
-        function initMap() {
-          var myLatLng = {lat: 39.7555, lng: -105.2211};
 
-          var map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 14,
-            center: myLatLng
-          });
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBORoljxV99j1KvcO2mkD4BNNuAPanaZtE&libraries=drawing"></script>
+<script type="text/javascript" src="customMarker.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="geospatialapi.js"></script>
+<script type="text/javascript">
 
-          var marker = new google.maps.Marker({
-            position: myLatLng,
+    var poly;
+    var map;
+    var markers = [];
+    var myLatLng;
+    var overlays = [];
+
+    GeospatialAPI.onUpdateReceived = function(feature_id) {
+        drawAllMarkers(); //redraw bullshit
+    }
+
+    function initMap() {
+
+        myLatLng = {lat: 39.7555, lng: -105.2211};
+
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: myLatLng,
+            zoom: 13,
+        });
+
+        map.addListener('zoom_changed', function() {
+            var oLength = overlays.length;
+            if (map.getZoom() >= 14) {
+                for (var i = 0; i < oLength; i++) {
+                    overlays[i].show();
+                }
+            } else {
+                for (var i = 0; i < oLength; i++) {
+                    overlays[i].hide();
+                }
+            }
+        });
+
+
+        map.addListener('idle', function() {
+            getCornerPoints();
+        });
+
+    }
+
+    google.maps.event.addDomListener(window, 'load', initMap);
+
+    function saveMarkersToServer() {
+
+    }
+
+
+    function loadMarkersFromServer() {
+        //loop through the JSON shit to populate map with markers
+        marker = new google.maps.Marker({
+            position: {lat: 39.75, lng: -105.22},
             map: map,
-            title: 'this is some draggable shtuff',
-            draggable: true
-          });
+            title: 'title', //read in title id you slut
+            description: 'hi,' // read in description
+        })
+
+    }
+
+
+    function getCornerPoints() {
+
+        var bounds = map.getBounds();
+
+        var NECorner = bounds.getNorthEast();
+        var SWCorner = bounds.getSouthWest();
+
+        var corner1 = new google.maps.LatLng(NECorner.lat(), NECorner.lng());
+        var corner2 = new google.maps.LatLng(NECorner.lat(), SWCorner.lng());
+        var corner3 = new google.maps.LatLng(SWCorner.lat(), SWCorner.lng());
+        var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
+
+        //console.log(corner1.toString(), '\n', corner2.toString(), '\n', corner3.toString(), '\n', corner4.toString());
+        console.log(corner4.lng(), corner4.lat(), corner2.lng(), corner2.lat());
+        GeospatialAPI.getFeaturesInRect({x: corner2.lng(), y: corner2.lat()}, {x: corner4.lng(), y: corner4.lat()}, function(features) {
+            console.log('shit');
+            console.log(features);
+            //console.log(feature.id);
+
+            if(overlays.length == 0) {
+                for (var i = 0; i < features.length; i++) {
+                    var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
+
+                    var marker = new google.maps.Marker({
+                        position: customLatLng,
+                        map: map,
+                        title: "Please zoom in to edit/view data",
+                    });
+
+                    markers.push(marker);
+
+                    overlays.push(new CustomMarker(
+                            customLatLng,
+                            map,
+                            {
+                                marker_id: features[i].id,
+                                rightSidebar: document.getElementById('right-sidebar')
+                            },
+                            features[i].payload.title,
+                            features[i].payload.description
+                    ));
+                }
+            } else {
+
+                for (var i = 0; i < features.length; i++) {
+
+                    for (var j = 0; j < overlays.length; j++) {
+                        if (features[i].id = !overlays[j].getID()) {
+                            var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
+
+                            var marker = new google.maps.Marker({
+                                position: customLatLng,
+                                map: map,
+                                title: "Please zoom in to edit/view data",
+                            });
+
+                            markers.push(marker);
+
+                            overlays.push(new CustomMarker(
+                                    customLatLng,
+                                    map,
+                                    {
+                                        marker_id: features[i].id,
+                                        rightSidebar: document.getElementById('right-sidebar')
+                                    },
+                                    features[i].payload.title,
+                                    features[i].payload.description
+                            ));
+                        }
+                    }
+
+                }
+            }
+        });
+
+    }
+
+    function redrawAllPoints() {
+
+        var bounds = map.getBounds();
+
+        var NECorner = bounds.getNorthEast();
+        var SWCorner = bounds.getSouthWest();
+
+        var corner1 = new google.maps.LatLng(NECorner.lat(), NECorner.lng());
+        var corner2 = new google.maps.LatLng(NECorner.lat(), SWCorner.lng());
+        var corner3 = new google.maps.LatLng(SWCorner.lat(), SWCorner.lng());
+        var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
+
+        //console.log(corner1.toString(), '\n', corner2.toString(), '\n', corner3.toString(), '\n', corner4.toString());
+        console.log(corner4.lng(), corner4.lat(), corner2.lng(), corner2.lat());
+        GeospatialAPI.getFeaturesInRect({x: corner2.lng(), y: corner2.lat()}, {x: corner4.lng(), y: corner4.lat()}, function(features) {
+            console.log(features);
+            //console.log(feature.id);
+            for (var i = 0; i < features.length; i++) {
+
+                console.log("here");
+                var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
+
+                var marker = new google.maps.Marker({
+                    position: customLatLng,
+                    map: map,
+                    title: "Please zoom in to edit/view data",
+                });
+
+                markers.push(marker);
+
+                overlays.push(new CustomMarker(
+                        customLatLng,
+                        map,
+                        {
+                            marker_id: features[i].id,
+                            rightSidebar: document.getElementById('right-sidebar')
+                        },
+                        features[i].payload.title,
+                        features[i].payload.description
+                ));
+            }
+        });
+    }
+
+    function deleteMarker() {
+
+        var currentID = document.getElementById("id-value").value;
+        var result = confirm('Are you sure you want to delete this Marker?');
+
+        if (result) {
+            for (var i = 0; i < overlays.length; i++) {
+                if (overlays[i].getID() == currentID) {
+
+                    for (var j = 0; j < markers.length; j++) {
+                        if (markers[j].position.lat() == overlays[i].latlng.lat() && markers[j].position.lng() == overlays[i].latlng.lng() ) {
+                            markers[j].setMap(null);
+                        }
+                    }
+
+                    console.log(currentID);
+
+                    GeospatialAPI.getFeature(currentID, function(feature) {
+                        GeospatialAPI.deleteFeature(feature, function(status) {
+                            if(status.status == 'success') {
+                                console.log('this shit was deleted');
+                            }
+                        })
+                    });
+
+                    console.log("amihere")
+                    overlays[i].hide(); //failing here
+                    overlays[i].remove();
+                    overlays.splice(i, 1);
+                }
+            }
         }
-    </script>
-    -->
+        document.getElementById('right-sidebar').style.display = 'none';
+    }
 
 
-    </body>
+    function drawAllMarkers() {
+
+
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+        }
+        for (var i = 0; i < overlays.length; i++) {
+            overlays[i].remove();
+        }
+
+        getCornerPoints(); //should redraw everything... probably....
+    }
+
+    function showDiv() {
+        var div = document.getElementById('drop-down');
+        if (div.style.display !== 'none') {
+            div.style.display = 'none';
+        }
+        else {
+            div.style.display = 'block';
+        }
+        redrawAllPoints();
+        //loadMarkersFromServer();
+        //saveMarkersToServer();
+
+    }
+
+
+    //This places random markers on clicks
+    function addMarker(event) {
+        var title = document.getElementById("titleText").value;
+        var description = document.getElementById("descriptionText").value;
+        var currentID;
+        console.log(event.latLng.lat());
+        GeospatialAPI.createFeature({x: event.latLng.lng(), y: event.latLng.lat()}, {title: title, description: description},function(feature) {
+            GeospatialAPI.getFeature(feature.id, function(feature) {
+                console.log('got my feature that i just created: ' + feature.id);
+                currentID = feature.id;
+                overlays.push(new CustomMarker(
+                        event.latLng,
+                        map,
+                        {
+                            marker_id: feature.id,
+                            rightSidebar: document.getElementById('right-sidebar')
+                        },
+                        title,
+                        description
+                ));
+            })
+        });
+
+        var marker = new google.maps.Marker({
+            position: event.latLng,
+            map: map,
+            title: "Please zoom in to edit/view data",
+        });
+
+        google.maps.event.clearListeners(map, 'click');
+
+        markers.push(marker);
+
+        document.getElementById("titleText").value = "Please enter a title";
+        document.getElementById("descriptionText").value = "Please enter a description";
+    }
+
+
+
+    function saveOverData() {
+
+        var title = document.getElementById("titleTextEditor").value;
+        var description = document.getElementById("descriptionTextEditor").value;
+        var currentID = document.getElementById("id-value").value;
+
+        for (var i = 0; i < overlays.length; i++) {
+            console.log("lolwhat");
+            if (overlays[i].getID() == currentID) {
+                console.log("fuck2");
+                overlays[i].setValues(title, description);
+                //overlays[i].title = title;
+                //overlays[i].description = description;
+                console.log("imhere");
+                GeospatialAPI.getFeature(overlays[i].getID(), function(feature) {
+                    GeospatialAPI.updateFeature(feature, function(feature) {
+                        console.log('now my feature has this shit: ' + feature.description + ' ' + feature.title);
+                    })
+                });
+            }
+
+        }
+
+
+
+        document.getElementById("right-sidebar").style.display = 'none';
+    }
+
+
+
+    function createDataButton() {
+        //send shit to server
+        showDiv();
+        map.addListener('click', addMarker);
+        //marker.setMap(null); for removing markers eventually
+    }
+
+
+</script>
+</body>
 
 </html>

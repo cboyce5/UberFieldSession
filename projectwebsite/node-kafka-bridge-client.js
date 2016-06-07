@@ -10,7 +10,7 @@ function createClient(cb) {
 
     client.connect(6969, 'localhost', function() {
         console.log('Node Kafka Bridge Client connected.');
-    })
+    });
 
     client.on('data', function(data) {
         cb(data);
