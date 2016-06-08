@@ -1,50 +1,17 @@
-/*var GeospatialAPI = function() {
-
-    geospatial.thrift.GeospatialClient.prototype.ws = null;
-
-    geospatial.thrift.GeospatialClient.prototype.init = function() {
-        if ("WebSocket" in window) {
-            console.log('creating ws');
-            this.ws = new WebSocket('ws://'+window.location.host+'/kafka');
-
-            this.ws.onopen = function() {
-                this.send("Message to send");
-            }.bind(this.ws);
-
-            this.ws.onmessage = function (evt)  {
-                var received_msg = evt.data;
-                console.log(received_msg);
-            };
-        } else {
-            alert("WebSocket NOT supported by your Browser!");
-        }
-    };
-
-    var transport = new Thrift.Transport("http://localhost:8080/geospatial");
-    var protocol = new Thrift.Protocol(transport);
-
-    return new geospatial.thrift.GeospatialClient(protocol);
-}();
-
-function runFeatureCreateTest() {
-    GeospatialAPI.createFeature(geospatial.thrift.Point({x: 69, y: 69}), JSON.stringify({}));
-}*/
-
-
 var GeospatialAPI = function() {
     var ws = null;
     return {
         init: function() {
             var self = this;
             if ("WebSocket" in window) {
-                console.log('creating ws');
                 ws = new WebSocket('ws://'+window.location.host+'/kafka');
 
                 ws.onopen = function() {
                     this.send("Message to send");
                 }.bind(ws);
 
-                ws.onmessage = function (evt)  {
+                ws.onmessage = function(evt) {
+                    console.log('receiving message');
                     self.onUpdateReceived(evt.data);
                 };
             } else {
@@ -116,7 +83,6 @@ var GeospatialAPI = function() {
         updateFeature: function(feature, cb) {
             if($.type(feature.payload) !== 'string') {
                 feature.payload = JSON.stringify(feature.payload);
-
             }
 
             $.ajax ({
