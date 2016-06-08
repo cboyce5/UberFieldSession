@@ -28,7 +28,6 @@ nodeKafkaBridgeClient(function(msg) {
     })
 });
 
-
 app.ws('/kafka', function(ws, req) {
     // should do verification for security in a production environment
     /*ws.on('message', function(msg) {
