@@ -98,6 +98,10 @@ var GeospatialAPI = function() {
         },
 
         deleteFeature: function(feature, cb) {
+            if($.type(feature.payload) !== 'string') {
+                feature.payload = JSON.stringify(feature.payload);
+            }
+            
             $.ajax ({
                 url: '/feature/' + feature.id,
                 type: 'DELETE',
