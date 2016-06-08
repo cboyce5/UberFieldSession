@@ -12,11 +12,11 @@ var app = express();
 
 var expressWs = require('express-ws')(app);
 
+
 nodeKafkaBridgeClient(function(msg) {
     console.log(msg.toString());
 
     expressWs.getWss('/kafka').clients.forEach(function(client) {
-        console.log('sending message');
         client.send(msg.toString());
     })
 });
@@ -25,7 +25,11 @@ nodeKafkaBridgeClient(function(msg) {
 var Geospatial = require('./Geospatial');
 var ttypes = require('./geospatial_types');
 
-transport = thrift.TBufferedTransport();
+var thriftPool = require('node-thrift-pool');
+
+var client = thriftPool(thrift, Geospatial, {host: 'localhost', port: 9090});
+
+/*transport = thrift.TBufferedTransport();
 protocol = thrift.TBinaryProtocol();
 
 var connection = thrift.createConnection("localhost", 9090, {
@@ -33,7 +37,8 @@ var connection = thrift.createConnection("localhost", 9090, {
     protocol : protocol
 });
 
-var client = thrift.createClient(Geospatial, connection);
+var client = thrift.createClient(Geospatial, connection);*/
+
 
 app.use(express.static(__dirname + '/pub'));
 

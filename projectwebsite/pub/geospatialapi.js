@@ -79,6 +79,9 @@ var GeospatialAPI = function() {
 
         getFeature: function(id, cb) {
             $.get('/feature/' + id, function(feature) {
+                if(feature && feature.payload) {
+                    feature.payload = JSON.parse(feature.payload);
+                }
                 if(cb)
                     cb(feature);
             })
