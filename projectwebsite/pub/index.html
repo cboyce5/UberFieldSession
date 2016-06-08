@@ -109,10 +109,12 @@
     var myLatLng;
     var overlays = [];
 
+    /*
     GeospatialAPI.onUpdateReceived = function(feature_id) {
+        console.log("i heard you");
         drawAllMarkers(); //redraw bullshit
     }
-
+*/
     function initMap() {
 
         myLatLng = {lat: 39.7555, lng: -105.2211};
@@ -191,7 +193,6 @@
                     });
 
                     markers.push(marker);
-
                     overlays.push(new CustomMarker(
                             customLatLng,
                             map,
@@ -319,8 +320,6 @@
 
 
     function drawAllMarkers() {
-
-
         for (var i = 0; i < markers.length; i++) {
             markers[i].setMap(null);
         }
@@ -350,10 +349,13 @@
     function addMarker(event) {
         var title = document.getElementById("titleText").value;
         var description = document.getElementById("descriptionText").value;
+        var currentID;
+
         console.log(event.latLng.lat());
         GeospatialAPI.createFeature({x: event.latLng.lng(), y: event.latLng.lat()}, {title: title, description: description},function(feature) {
             GeospatialAPI.getFeature(feature.id, function(feature) {
                 console.log('got my feature that i just created: ' + feature.id);
+                currentID = feature.id;
                 overlays.push(new CustomMarker(
                         event.latLng,
                         map,
@@ -366,19 +368,6 @@
                 ));
             })
         });
-
-
-        overlays.push(new CustomMarker(
-                event.latLng,
-                map,
-                {
-                    marker_id: '123',
-                    rightSidebar: document.getElementById('right-sidebar')
-                },
-                title,
-                description
-        ));
-
 
         var marker = new google.maps.Marker({
             position: event.latLng,
@@ -402,16 +391,21 @@
         var description = document.getElementById("descriptionTextEditor").value;
         var currentID = document.getElementById("id-value").value;
 
+        console.log(title);
+        console.log(description);
+        console.log(currentID);
+
         for (var i = 0; i < overlays.length; i++) {
+            console.log("lolwhat");
             if (overlays[i].getID() == currentID) {
                 console.log("fuck2");
                 overlays[i].setValues(title, description);
-                //overlays[i].title = title;
-                //overlays[i].description = description;
                 console.log("imhere");
-                GeospatialAPI.getFeature(overlays[i].getID(), function(feature) {
+                GeospatialAPI.getFeature(currentID, function(feature) {
+                    feature.payload.title = title;
+                    feature.payload.description = description;
                     GeospatialAPI.updateFeature(feature, function(feature) {
-                        console.log('now my feature has this shit: ' + feature.description + ' ' + feature.title);
+                        console.log('now my feature has this shit: ' + feature.description + ' ' + feature.payload.title);
                     })
                 });
             }

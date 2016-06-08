@@ -4,7 +4,6 @@ var GeospatialAPI = function() {
         init: function() {
             var self = this;
             if ("WebSocket" in window) {
-                console.log('creating ws');
                 ws = new WebSocket('ws://'+window.location.host+'/kafka');
 
                 ws.onopen = function() {
@@ -47,6 +46,9 @@ var GeospatialAPI = function() {
 
         getFeature: function(id, cb) {
             $.get('/feature/' + id, function(feature) {
+                if(feature && feature.payload) {
+                    feature.payload = JSON.parse(feature.payload);
+                }
                 if(cb)
                     cb(feature);
             })
