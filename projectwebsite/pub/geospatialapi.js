@@ -1,55 +1,26 @@
-/*var GeospatialAPI = function() {
-
-    geospatial.thrift.GeospatialClient.prototype.ws = null;
-
-    geospatial.thrift.GeospatialClient.prototype.init = function() {
-        if ("WebSocket" in window) {
-            console.log('creating ws');
-            this.ws = new WebSocket('ws://'+window.location.host+'/kafka');
-
-            this.ws.onopen = function() {
-                this.send("Message to send");
-            }.bind(this.ws);
-
-            this.ws.onmessage = function (evt)  {
-                var received_msg = evt.data;
-                console.log(received_msg);
-            };
-        } else {
-            alert("WebSocket NOT supported by your Browser!");
-        }
-    };
-
-    var transport = new Thrift.Transport("http://localhost:8080/geospatial");
-    var protocol = new Thrift.Protocol(transport);
-
-    return new geospatial.thrift.GeospatialClient(protocol);
-}();
-
-function runFeatureCreateTest() {
-    GeospatialAPI.createFeature(geospatial.thrift.Point({x: 69, y: 69}), JSON.stringify({}));
-}*/
-
-
 var GeospatialAPI = function() {
     var ws = null;
     return {
         init: function() {
+            var self = this;
             if ("WebSocket" in window) {
-                console.log('creating ws');
                 ws = new WebSocket('ws://'+window.location.host+'/kafka');
 
                 ws.onopen = function() {
                     this.send("Message to send");
                 }.bind(ws);
 
-                ws.onmessage = function (evt)  {
-                    var received_msg = evt.data;
-                    console.log(received_msg);
+                ws.onmessage = function(evt) {
+                    console.log('receiving message');
+                    self.onUpdateReceived(evt.data);
                 };
             } else {
                 alert("WebSocket NOT supported by your Browser!");
             }
+        },
+
+        onUpdateReceived: function(data) {
+            console.log('this needs to be implemented - received: ' + data);
         },
 
         createFeature: function(point, payload, cb) {
@@ -64,6 +35,9 @@ var GeospatialAPI = function() {
 
             }
             $.post('/features', {point: point, payload: payload}, function(feature) {
+                if(feature && feature.payload) {
+                    feature.payload = JSON.parse(feature.payload);
+                }
                 if(cb)
                     cb(feature);
             });
@@ -72,6 +46,9 @@ var GeospatialAPI = function() {
 
         getFeature: function(id, cb) {
             $.get('/feature/' + id, function(feature) {
+                if(feature && feature.payload) {
+                    feature.payload = JSON.parse(feature.payload);
+                }
                 if(cb)
                     cb(feature);
             })
@@ -91,17 +68,21 @@ var GeospatialAPI = function() {
                 btm_rt.y = -90;
 
 
-            $.get('/features/' + top_lt.x + ',' + top_lt.y +'/' + btm_rt.x + ',' + btm_rt.y, function(features) {
+            $.get('/features/' + top_lt.x + ',' + top_lt.y + '/' + btm_rt.x + ',' + btm_rt.y, function(features) {
+                if(features) {
+                    for(var i = 0; i < features.length; i++) {
+                        features[i].payload = JSON.parse(features[i].payload);
+                    }
+                }
+
                 if(cb)
                     cb(features);
-                console.log(features);
             })
         },
 
         updateFeature: function(feature, cb) {
             if($.type(feature.payload) !== 'string') {
                 feature.payload = JSON.stringify(feature.payload);
-
             }
 
             $.ajax ({
@@ -130,6 +111,8 @@ var GeospatialAPI = function() {
         }
     }
 }();
+
+GeospatialAPI.init();
 
 
 function runFeatureTests() {

@@ -10,17 +10,6 @@ var app = express();
     }));
 
 
-var expressWs = require('express-ws')(app);
-
-
-nodeKafkaBridgeClient(function(msg) {
-    console.log(msg.toString());
-
-    expressWs.getWss('/kafka').clients.forEach(function(client) {
-        client.send(msg.toString());
-    })
-});
-
 
 var Geospatial = require('./Geospatial');
 var ttypes = require('./geospatial_types');
@@ -29,16 +18,24 @@ var thriftPool = require('node-thrift-pool');
 
 var client = thriftPool(thrift, Geospatial, {host: 'localhost', port: 9090});
 
-/*transport = thrift.TBufferedTransport();
-protocol = thrift.TBinaryProtocol();
+var expressWs = require('express-ws')(app);
+var kafkaWs = null;
 
-var connection = thrift.createConnection("localhost", 9090, {
-    transport : transport,
-    protocol : protocol
+nodeKafkaBridgeClient(function(msg) {
+
+    kafkaWs.clients.forEach(function(client) {
+        client.send(msg.toString());
+    })
 });
 
-var client = thrift.createClient(Geospatial, connection);*/
+app.ws('/kafka', function(ws, req) {
+    // should do verification for security in a production environment
+    /*ws.on('message', function(msg) {
+        //noop
+    });*/
+});
 
+kafkaWs = expressWs.getWss('/kafka');
 
 app.use(express.static(__dirname + '/pub'));
 
@@ -140,13 +137,6 @@ app.delete('/feature/:id', function(req, res) {
         res.json({'status': 'fail'});
     }
 
-});
-
-app.ws('/kafka', function(ws, req) {
-    // should do verification for security in a production environment
-   /* ws.on('message', function(msg) {
-    //noop
-    });*/
 });
 
 app.listen(8080, function() {
