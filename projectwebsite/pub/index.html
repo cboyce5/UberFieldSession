@@ -146,23 +146,6 @@
 
     google.maps.event.addDomListener(window, 'load', initMap);
 
-    function saveMarkersToServer() {
-
-    }
-
-
-    function loadMarkersFromServer() {
-        //loop through the JSON shit to populate map with markers
-        marker = new google.maps.Marker({
-            position: {lat: 39.75, lng: -105.22},
-            map: map,
-            title: 'title', //read in title id you slut
-            description: 'hi,' // read in description
-        })
-
-    }
-
-
     function getCornerPoints() {
 
         var bounds = map.getBounds();
@@ -174,14 +157,13 @@
         var corner2 = new google.maps.LatLng(NECorner.lat(), SWCorner.lng());
         var corner3 = new google.maps.LatLng(SWCorner.lat(), SWCorner.lng());
         var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
-
+        console.log(overlays.length);
         //console.log(corner1.toString(), '\n', corner2.toString(), '\n', corner3.toString(), '\n', corner4.toString());
         console.log(corner4.lng(), corner4.lat(), corner2.lng(), corner2.lat());
         GeospatialAPI.getFeaturesInRect({x: corner2.lng(), y: corner2.lat()}, {x: corner4.lng(), y: corner4.lat()}, function(features) {
             console.log('shit');
             console.log(features);
             //console.log(feature.id);
-
             if(overlays.length == 0) {
                 for (var i = 0; i < features.length; i++) {
                     var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
@@ -191,7 +173,6 @@
                         map: map,
                         title: "Please zoom in to edit/view data",
                     });
-
                     markers.push(marker);
                     overlays.push(new CustomMarker(
                             customLatLng,
@@ -204,14 +185,15 @@
                             features[i].payload.description
                     ));
                 }
+            } else if(overlays.length == features.length || features.length < overlays.length) {
+console.log("nothing");
             } else {
-
                 for (var i = 0; i < features.length; i++) {
-
+                    var counter = 0;
                     for (var j = 0; j < overlays.length; j++) {
-                        if (features[i].id = !overlays[j].getID()) {
+                        if (features[i].id !== overlays[j].getID() && (counter == features.length)) {
+                            console.log("supershitballs");
                             var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
-
                             var marker = new google.maps.Marker({
                                 position: customLatLng,
                                 map: map,
@@ -231,6 +213,7 @@
                                     features[i].payload.description
                             ));
                         }
+                        counter++;
                     }
 
                 }
@@ -252,13 +235,12 @@
         var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
 
         //console.log(corner1.toString(), '\n', corner2.toString(), '\n', corner3.toString(), '\n', corner4.toString());
-        console.log(corner4.lng(), corner4.lat(), corner2.lng(), corner2.lat());
+        //console.log(corner4.lng(), corner4.lat(), corner2.lng(), corner2.lat());
         GeospatialAPI.getFeaturesInRect({x: corner2.lng(), y: corner2.lat()}, {x: corner4.lng(), y: corner4.lat()}, function(features) {
-            console.log(features);
+           // console.log(features);
             //console.log(feature.id);
             for (var i = 0; i < features.length; i++) {
 
-                console.log("here");
                 var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
 
                 var marker = new google.maps.Marker({
@@ -310,7 +292,7 @@
 
                     console.log("amihere")
                     overlays[i].hide(); //failing here
-                    overlays[i].remove();
+                    //overlays[i].remove();
                     overlays.splice(i, 1);
                 }
             }
@@ -320,12 +302,19 @@
 
 
     function drawAllMarkers() {
+
+
+        var length = overlays.length - 1;
         for (var i = 0; i < markers.length; i++) {
             markers[i].setMap(null);
         }
-        for (var i = 0; i < overlays.length; i++) {
-            overlays[i].remove();
+        for (var i = length ; i >= 0; i--) {
+            overlays[i].hide();
+            overlays.pop();
+            markers.pop();
         }
+       // overlays.splice(0,length);
+        console.log(overlays.length);
         redrawAllPoints();
         //getCornerPoints(); //should redraw everything... probably....
     }
@@ -339,10 +328,6 @@
         else {
             div.style.display = 'block';
         }
-        //redrawAllPoints();
-        //loadMarkersFromServer();
-        //saveMarkersToServer();
-
     }
 
 
@@ -414,19 +399,14 @@
             }
 
         }
-
-
-
         document.getElementById("right-sidebar").style.display = 'none';
     }
 
 
 
     function createDataButton() {
-        //send shit to server
         showDiv();
         map.addListener('click', addMarker);
-        //marker.setMap(null); for removing markers eventually
     }
 
 

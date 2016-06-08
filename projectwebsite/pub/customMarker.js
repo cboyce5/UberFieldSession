@@ -21,7 +21,7 @@ CustomMarker.prototype.draw = function() {
 		var div_title = document.createElement('div');
 		div_title.className = 'div_title';
 		div_title.innerHTML= this.title;
-		console.log(this.title);
+		//console.log(this.title);
 		
 		var div_description = document.createElement('div');
 		div_description.className = 'div_description';
@@ -102,9 +102,7 @@ CustomMarker.prototype.show = function() {
 };
 
 CustomMarker.prototype.toggle = function() {
-	console.log("fuck");
 	if (this.div) {
-		console.log("fuck3");
 		if (this.div.style.visibility === 'hidden') {
 			this.show();
 		} else {
@@ -120,7 +118,6 @@ CustomMarker.prototype.getID = function() {
 
 CustomMarker.prototype.setValues = function(title, description) {
 	var self = this;
-	console.log(title);
 	self.title = title;
 	self.description = description;
 	self.div.childNodes[1].innerHTML = this.title;
