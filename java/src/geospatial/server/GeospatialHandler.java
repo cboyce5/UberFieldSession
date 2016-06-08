@@ -20,131 +20,154 @@ public class GeospatialHandler implements Geospatial.Iface {
 
     @Override
     public Feature createFeature(Point point, String payload) throws TException {
-        Session s = Database.getSession();
+        try {
+            Session s = Database.getSession();
 
-        String grid = GridUtil.pointToQuadKey(point);
-        UUID uuid = UUIDs.random();
+            String grid = GridUtil.pointToQuadKey(point);
+            UUID uuid = UUIDs.random();
 
-        PreparedStatement stmt = s.prepare("insert into feature (grid, feature_id, payload, point_x, point_y, state) values (?, ?, ?, ?, ?, ?)");
-        BoundStatement bstmt = new BoundStatement(stmt);
+            PreparedStatement stmt = s.prepare("insert into feature (grid, feature_id, payload, point_x, point_y, state) values (?, ?, ?, ?, ?, ?)");
+            BoundStatement bstmt = new BoundStatement(stmt);
 
-        bstmt.bind(grid, uuid, payload, point.x, point.y, FeatureState.CLEAN.getValue());
+            bstmt.bind(grid, uuid, payload, point.x, point.y, FeatureState.CLEAN.getValue());
 
-        s.execute(bstmt);
+            s.execute(bstmt);
 
-        producer.produce("geospatial", uuid.toString());
+            producer.produce("geospatial", uuid.toString());
 
-        return new Feature(grid, uuid.toString(), point, FeatureState.CLEAN, payload);
+            return new Feature(grid, uuid.toString(), point, FeatureState.CLEAN, payload);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     @Override
     public Feature getFeature(String id) throws TException {
-        Session s = Database.getSession();
-
-        PreparedStatement stmt = s.prepare("select * from feature where feature_id = ?");
-        BoundStatement bstmt = new BoundStatement(stmt);
-
         try {
-            bstmt.bind(UUID.fromString(id));
+            Session s = Database.getSession();
+
+            PreparedStatement stmt = s.prepare("select * from feature where feature_id = ?");
+            BoundStatement bstmt = new BoundStatement(stmt);
+
+                bstmt.bind(UUID.fromString(id));
+
+
+            ResultSet result = s.execute(bstmt);
+            Row r = result.one();
+
+            if(r != null) {
+                return rowToFeature(r);
+            } else {
+                return null;
+            }
         } catch (Exception e) {
-            return null;
-        }
-
-        ResultSet result = s.execute(bstmt);
-        Row r = result.one();
-
-        if(r != null) {
-            return rowToFeature(r);
-        } else {
+            e.printStackTrace();
             return null;
         }
     }
 
     @Override
     public List<Feature> getFeaturesInRect(Rectangle rect) throws TException {
-        Set<String> quadKeys = GridUtil.rectangleToQuadKeySet(rect);
-        List<Feature> retList = new ArrayList<>();
+        try {
+            Set<String> quadKeys = GridUtil.rectangleToQuadKeySet(rect);
+            List<Feature> retList = new ArrayList<>();
 
-        Session s = Database.getSession();
+            Session s = Database.getSession();
 
-        StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
 
-        builder.append("select * from feature where grid in (");
+            builder.append("select * from feature where grid in (");
 
-        for(int i = 0; i < quadKeys.size(); i++) {
-            builder.append("?,");
-        }
-
-        builder.deleteCharAt(builder.lastIndexOf(","));
-
-        builder.append(")");
-
-        PreparedStatement stmt = s.prepare(builder.toString());
-        BoundStatement bstmt = new BoundStatement(stmt);
-
-        int i = 0;
-        for(String key : quadKeys) {
-            bstmt.setString(i , key);
-            i++;
-        }
-
-        ResultSet results = s.execute(bstmt);
-
-        Iterator<Row> iterator = results.iterator();
-
-        Row r;
-        if(iterator.hasNext()) {
-            while((r = iterator.next()) != null) {
-                if(GridUtil.pointInRect(rect, new Point(r.getDouble("point_x"), r.getDouble("point_y")))) {
-                    retList.add(rowToFeature(r));
-                }
+            for(int i = 0; i < quadKeys.size(); i++) {
+                builder.append("?,");
             }
-        } else {
+
+            builder.deleteCharAt(builder.lastIndexOf(","));
+
+            builder.append(")");
+
+            PreparedStatement stmt = s.prepare(builder.toString());
+            BoundStatement bstmt = new BoundStatement(stmt);
+
+            int i = 0;
+            for(String key : quadKeys) {
+                bstmt.setString(i , key);
+                i++;
+            }
+
+            ResultSet results = s.execute(bstmt);
+
+            Iterator<Row> iterator = results.iterator();
+
+            Row r;
+            if(iterator.hasNext()) {
+                while((r = iterator.next()) != null) {
+                    if(GridUtil.pointInRect(rect, new Point(r.getDouble("point_x"), r.getDouble("point_y")))) {
+                        retList.add(rowToFeature(r));
+                    }
+                }
+            } else {
+                return null;
+            }
+
+            return retList;
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
-
-        return retList;
     }
 
     @Override
     public Feature updateFeature(Feature feature) throws TException {
         // update feature where feature_id = feature.getId();
-        Session s = Database.getSession();
-        Feature featureOld = getFeature(feature.getId());
-        PreparedStatement stmt;
-        BoundStatement bstmt;
-        if(!feature.getPoint().equals(featureOld.getPoint())) {
-            deleteFeature(featureOld);
-            stmt = s.prepare("insert into feature (grid, feature_id, payload, point_x, point_y, state) values (?, ?, ?, ?, ?, ?)");
-            bstmt = new BoundStatement(stmt);
+        try {
+            Session s = Database.getSession();
+            Feature featureOld = getFeature(feature.getId());
+            PreparedStatement stmt;
+            BoundStatement bstmt;
+            if(!feature.getPoint().equals(featureOld.getPoint())) {
+                deleteFeature(featureOld);
+                stmt = s.prepare("insert into feature (grid, feature_id, payload, point_x, point_y, state) values (?, ?, ?, ?, ?, ?)");
+                bstmt = new BoundStatement(stmt);
 
-            feature.grid = GridUtil.pointToQuadKey(feature.getPoint());
+                feature.grid = GridUtil.pointToQuadKey(feature.getPoint());
 
-            bstmt.bind(feature.getGrid(), UUID.fromString(feature.getId()), feature.getPayload(),
-                    feature.getPoint().getX(), feature.getPoint().getY(), FeatureState.CLEAN.getValue());
-        } else {
-            stmt = s.prepare("update feature set point_x = ?, point_y = ?, payload = ?, state = ? where grid = ? and feature_id = ?");
-            bstmt = new BoundStatement(stmt);
-            bstmt.bind(feature.getPoint().getX(), feature.getPoint().getY(), feature.getPayload(), feature.getState().getValue(), feature.getGrid(), UUID.fromString(feature.getId()));
+                bstmt.bind(feature.getGrid(), UUID.fromString(feature.getId()), feature.getPayload(),
+                        feature.getPoint().getX(), feature.getPoint().getY(), FeatureState.CLEAN.getValue());
+            } else {
+                stmt = s.prepare("update feature set point_x = ?, point_y = ?, payload = ?, state = ? where grid = ? and feature_id = ?");
+                bstmt = new BoundStatement(stmt);
+                bstmt.bind(feature.getPoint().getX(), feature.getPoint().getY(), feature.getPayload(), feature.getState().getValue(), feature.getGrid(), UUID.fromString(feature.getId()));
+            }
+            s.execute(bstmt);
+
+            producer.produce("geospatial", feature.getId());
+
+            return feature;
+        } catch (Exception e) {
+            return null;
         }
-        s.execute(bstmt);
 
-        producer.produce("geospatial", feature.getId());
-
-        return feature;
     }
 
     @Override
     public boolean deleteFeature(Feature feature) throws TException {
-        Session s  = Database.getSession();
-        PreparedStatement stmt = s.prepare("delete from feature where grid = ? and feature_id = ?");
-        BoundStatement bstmt = new BoundStatement(stmt);
-        bstmt.bind(feature.getGrid(), UUID.fromString(feature.getId()));
-        s.execute(bstmt);
+        try {
+            Session s  = Database.getSession();
+            PreparedStatement stmt = s.prepare("delete from feature where grid = ? and feature_id = ?");
+            BoundStatement bstmt = new BoundStatement(stmt);
+            bstmt.bind(feature.getGrid(), UUID.fromString(feature.getId()));
+            s.execute(bstmt);
 
-        producer.produce("geospatial", feature.getId());
+            producer.produce("geospatial", feature.getId());
 
-        return true;
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     protected Feature rowToFeature(Row r) {

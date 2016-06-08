@@ -34,10 +34,10 @@ namespace geospatial.thrift
       IAsyncResult Begin_getFeaturesInRect(AsyncCallback callback, object state, Rectangle rect);
       List<Feature> End_getFeaturesInRect(IAsyncResult asyncResult);
       #endif
-      bool saveFeature(Feature feature);
+      Feature updateFeature(Feature feature);
       #if SILVERLIGHT
-      IAsyncResult Begin_saveFeature(AsyncCallback callback, object state, Feature feature);
-      bool End_saveFeature(IAsyncResult asyncResult);
+      IAsyncResult Begin_updateFeature(AsyncCallback callback, object state, Feature feature);
+      Feature End_updateFeature(IAsyncResult asyncResult);
       #endif
       bool deleteFeature(Feature feature);
       #if SILVERLIGHT
@@ -260,39 +260,39 @@ namespace geospatial.thrift
 
       
       #if SILVERLIGHT
-      public IAsyncResult Begin_saveFeature(AsyncCallback callback, object state, Feature feature)
+      public IAsyncResult Begin_updateFeature(AsyncCallback callback, object state, Feature feature)
       {
-        return send_saveFeature(callback, state, feature);
+        return send_updateFeature(callback, state, feature);
       }
 
-      public bool End_saveFeature(IAsyncResult asyncResult)
+      public Feature End_updateFeature(IAsyncResult asyncResult)
       {
         oprot_.Transport.EndFlush(asyncResult);
-        return recv_saveFeature();
+        return recv_updateFeature();
       }
 
       #endif
 
-      public bool saveFeature(Feature feature)
+      public Feature updateFeature(Feature feature)
       {
         #if !SILVERLIGHT
-        send_saveFeature(feature);
-        return recv_saveFeature();
+        send_updateFeature(feature);
+        return recv_updateFeature();
 
         #else
-        var asyncResult = Begin_saveFeature(null, null, feature);
-        return End_saveFeature(asyncResult);
+        var asyncResult = Begin_updateFeature(null, null, feature);
+        return End_updateFeature(asyncResult);
 
         #endif
       }
       #if SILVERLIGHT
-      public IAsyncResult send_saveFeature(AsyncCallback callback, object state, Feature feature)
+      public IAsyncResult send_updateFeature(AsyncCallback callback, object state, Feature feature)
       #else
-      public void send_saveFeature(Feature feature)
+      public void send_updateFeature(Feature feature)
       #endif
       {
-        oprot_.WriteMessageBegin(new TMessage("saveFeature", TMessageType.Call, seqid_));
-        saveFeature_args args = new saveFeature_args();
+        oprot_.WriteMessageBegin(new TMessage("updateFeature", TMessageType.Call, seqid_));
+        updateFeature_args args = new updateFeature_args();
         args.Feature = feature;
         args.Write(oprot_);
         oprot_.WriteMessageEnd();
@@ -303,7 +303,7 @@ namespace geospatial.thrift
         #endif
       }
 
-      public bool recv_saveFeature()
+      public Feature recv_updateFeature()
       {
         TMessage msg = iprot_.ReadMessageBegin();
         if (msg.Type == TMessageType.Exception) {
@@ -311,13 +311,13 @@ namespace geospatial.thrift
           iprot_.ReadMessageEnd();
           throw x;
         }
-        saveFeature_result result = new saveFeature_result();
+        updateFeature_result result = new updateFeature_result();
         result.Read(iprot_);
         iprot_.ReadMessageEnd();
         if (result.__isset.success) {
           return result.Success;
         }
-        throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "saveFeature failed: unknown result");
+        throw new TApplicationException(TApplicationException.ExceptionType.MissingResult, "updateFeature failed: unknown result");
       }
 
       
@@ -390,7 +390,7 @@ namespace geospatial.thrift
         processMap_["createFeature"] = createFeature_Process;
         processMap_["getFeature"] = getFeature_Process;
         processMap_["getFeaturesInRect"] = getFeaturesInRect_Process;
-        processMap_["saveFeature"] = saveFeature_Process;
+        processMap_["updateFeature"] = updateFeature_Process;
         processMap_["deleteFeature"] = deleteFeature_Process;
       }
 
@@ -463,14 +463,14 @@ namespace geospatial.thrift
         oprot.Transport.Flush();
       }
 
-      public void saveFeature_Process(int seqid, TProtocol iprot, TProtocol oprot)
+      public void updateFeature_Process(int seqid, TProtocol iprot, TProtocol oprot)
       {
-        saveFeature_args args = new saveFeature_args();
+        updateFeature_args args = new updateFeature_args();
         args.Read(iprot);
         iprot.ReadMessageEnd();
-        saveFeature_result result = new saveFeature_result();
-        result.Success = iface_.saveFeature(args.Feature);
-        oprot.WriteMessageBegin(new TMessage("saveFeature", TMessageType.Reply, seqid)); 
+        updateFeature_result result = new updateFeature_result();
+        result.Success = iface_.updateFeature(args.Feature);
+        oprot.WriteMessageBegin(new TMessage("updateFeature", TMessageType.Reply, seqid)); 
         result.Write(oprot);
         oprot.WriteMessageEnd();
         oprot.Transport.Flush();
@@ -1080,7 +1080,7 @@ namespace geospatial.thrift
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class saveFeature_args : TBase
+    public partial class updateFeature_args : TBase
     {
       private Feature _feature;
 
@@ -1106,7 +1106,7 @@ namespace geospatial.thrift
         public bool feature;
       }
 
-      public saveFeature_args() {
+      public updateFeature_args() {
       }
 
       public void Read (TProtocol iprot)
@@ -1139,7 +1139,7 @@ namespace geospatial.thrift
       }
 
       public void Write(TProtocol oprot) {
-        TStruct struc = new TStruct("saveFeature_args");
+        TStruct struc = new TStruct("updateFeature_args");
         oprot.WriteStructBegin(struc);
         TField field = new TField();
         if (Feature != null && __isset.feature) {
@@ -1155,7 +1155,7 @@ namespace geospatial.thrift
       }
 
       public override string ToString() {
-        StringBuilder sb = new StringBuilder("saveFeature_args(");
+        StringBuilder sb = new StringBuilder("updateFeature_args(");
         sb.Append("Feature: ");
         sb.Append(Feature== null ? "<null>" : Feature.ToString());
         sb.Append(")");
@@ -1168,11 +1168,11 @@ namespace geospatial.thrift
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class saveFeature_result : TBase
+    public partial class updateFeature_result : TBase
     {
-      private bool _success;
+      private Feature _success;
 
-      public bool Success
+      public Feature Success
       {
         get
         {
@@ -1194,7 +1194,7 @@ namespace geospatial.thrift
         public bool success;
       }
 
-      public saveFeature_result() {
+      public updateFeature_result() {
       }
 
       public void Read (TProtocol iprot)
@@ -1210,8 +1210,9 @@ namespace geospatial.thrift
           switch (field.ID)
           {
             case 0:
-              if (field.Type == TType.Bool) {
-                Success = iprot.ReadBool();
+              if (field.Type == TType.Struct) {
+                Success = new Feature();
+                Success.Read(iprot);
               } else { 
                 TProtocolUtil.Skip(iprot, field.Type);
               }
@@ -1226,26 +1227,28 @@ namespace geospatial.thrift
       }
 
       public void Write(TProtocol oprot) {
-        TStruct struc = new TStruct("saveFeature_result");
+        TStruct struc = new TStruct("updateFeature_result");
         oprot.WriteStructBegin(struc);
         TField field = new TField();
 
         if (this.__isset.success) {
-          field.Name = "Success";
-          field.Type = TType.Bool;
-          field.ID = 0;
-          oprot.WriteFieldBegin(field);
-          oprot.WriteBool(Success);
-          oprot.WriteFieldEnd();
+          if (Success != null) {
+            field.Name = "Success";
+            field.Type = TType.Struct;
+            field.ID = 0;
+            oprot.WriteFieldBegin(field);
+            Success.Write(oprot);
+            oprot.WriteFieldEnd();
+          }
         }
         oprot.WriteFieldStop();
         oprot.WriteStructEnd();
       }
 
       public override string ToString() {
-        StringBuilder sb = new StringBuilder("saveFeature_result(");
+        StringBuilder sb = new StringBuilder("updateFeature_result(");
         sb.Append("Success: ");
-        sb.Append(Success);
+        sb.Append(Success== null ? "<null>" : Success.ToString());
         sb.Append(")");
         return sb.ToString();
       }
