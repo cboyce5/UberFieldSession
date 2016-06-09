@@ -21,7 +21,6 @@ CustomMarker.prototype.draw = function() {
 		var div_title = document.createElement('div');
 		div_title.className = 'div_title';
 		div_title.innerHTML= this.title;
-		//console.log(this.title);
 		
 		var div_description = document.createElement('div');
 		div_description.className = 'div_description';
@@ -47,8 +46,6 @@ CustomMarker.prototype.draw = function() {
 		var self = this;
 
 		google.maps.event.addDomListener(div, "click", function() {
-			//alert('You clicked on a custom marker!');
-			//google.maps.event.trigger(self, "click");
 			document.getElementById("titleTextEditor").value = self.title;
 			document.getElementById("descriptionTextEditor").value = self.description;
 			document.getElementById("id-value").value = self.args.marker_id;
@@ -61,8 +58,7 @@ CustomMarker.prototype.draw = function() {
 			}
 
 		});
-
-
+		
 		var panes = this.getPanes();
 		panes.overlayImage.appendChild(this.div);
 	}

@@ -29,7 +29,7 @@
             <a href="#" class="myButton">RandomButton2</a>
             <a href="#" class="myButton">RandomButton3</a>
             <a href="#" class="myButton">RandomButton4</a>
-            <a href="#" class="myButton">RandomButton5</a>
+            <a href="https://www.youtube.com/watch?v=lXMskKTw3Bc" target="_blank" class="myButton">Never gonna hit those notes</a>
             <a href="#" onclick="showDiv();" class="myButton">Marker Creator</a>
         </div>
     </div>
@@ -86,12 +86,12 @@
             <div id="button-holder">
                 <button onclick="saveOverData()">Save</button>
                 <input type = "text" disabled size="11"
+                       style="display:none;"
                        id = "id-value"
                        value = "Please enter a title" />
                 <button onclick="document.getElementById('right-sidebar').style.display = 'none'">Revert</button>
             </div>
             <button onclick="deleteMarker()">Delete</button>
-            <button onclick="drawAllMarkers()">Redraw Testing Button</button>
         </div>
     </div>
 </div>
@@ -111,7 +111,6 @@
 
 
     GeospatialAPI.onUpdateReceived = function(feature_id) {
-        console.log("i heard you");
         drawAllMarkers(); //redraw bullshit
     }
 
@@ -157,13 +156,8 @@
         var corner2 = new google.maps.LatLng(NECorner.lat(), SWCorner.lng());
         var corner3 = new google.maps.LatLng(SWCorner.lat(), SWCorner.lng());
         var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
-        console.log(overlays.length);
-        //console.log(corner1.toString(), '\n', corner2.toString(), '\n', corner3.toString(), '\n', corner4.toString());
-        console.log(corner4.lng(), corner4.lat(), corner2.lng(), corner2.lat());
+
         GeospatialAPI.getFeaturesInRect({x: corner2.lng(), y: corner2.lat()}, {x: corner4.lng(), y: corner4.lat()}, function(features) {
-            console.log('shit');
-            console.log(features);
-            //console.log(feature.id);
             if(overlays.length == 0) {
                 for (var i = 0; i < features.length; i++) {
                     var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
@@ -185,37 +179,35 @@
                             features[i].payload.description
                     ));
                 }
-            } else if(overlays.length == features.length || features.length < overlays.length) {
-console.log("nothing");
             } else {
-                for (var i = 0; i < features.length; i++) {
-                    var counter = 0;
-                    for (var j = 0; j < overlays.length; j++) {
-                        if (features[i].id !== overlays[j].getID() && (counter == features.length)) {
-                            console.log("supershitballs");
-                            var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
-                            var marker = new google.maps.Marker({
-                                position: customLatLng,
-                                map: map,
-                                title: "Please zoom in to edit/view data",
-                            });
-
-                            markers.push(marker);
-
-                            overlays.push(new CustomMarker(
-                                    customLatLng,
-                                    map,
-                                    {
-                                        marker_id: features[i].id,
-                                        rightSidebar: document.getElementById('right-sidebar')
-                                    },
-                                    features[i].payload.title,
-                                    features[i].payload.description
-                            ));
+                for (var i = 0; i < overlays.length; i++) {
+                    for (var j = 0; j < features.length; j++) {
+                        var check = overlays[i].getID().localeCompare(features[j].id);
+                        if (check == 0) {
+                            features.splice(j, 1);
                         }
-                        counter++;
                     }
+                }
+                for (var i = 0; i < features.length; i++) {
+                    var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
+                    var marker = new google.maps.Marker({
+                        position: customLatLng,
+                        map: map,
+                        title: "Please zoom in to edit/view data",
+                    });
 
+                    markers.push(marker);
+
+                    overlays.push(new CustomMarker(
+                            customLatLng,
+                            map,
+                            {
+                                marker_id: features[i].id,
+                                rightSidebar: document.getElementById('right-sidebar')
+                            },
+                            features[i].payload.title,
+                            features[i].payload.description
+                    ));
                 }
             }
         });
@@ -234,11 +226,7 @@ console.log("nothing");
         var corner3 = new google.maps.LatLng(SWCorner.lat(), SWCorner.lng());
         var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
 
-        //console.log(corner1.toString(), '\n', corner2.toString(), '\n', corner3.toString(), '\n', corner4.toString());
-        //console.log(corner4.lng(), corner4.lat(), corner2.lng(), corner2.lat());
         GeospatialAPI.getFeaturesInRect({x: corner2.lng(), y: corner2.lat()}, {x: corner4.lng(), y: corner4.lat()}, function(features) {
-           // console.log(features);
-            //console.log(feature.id);
             for (var i = 0; i < features.length; i++) {
 
                 var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
@@ -280,7 +268,6 @@ console.log("nothing");
                         }
                     }
 
-                    console.log(currentID);
 
                     GeospatialAPI.getFeature(currentID, function(feature) {
                         GeospatialAPI.deleteFeature(feature, function(status) {
@@ -289,10 +276,7 @@ console.log("nothing");
                             }
                         })
                     });
-
-                    console.log("amihere")
-                    overlays[i].hide(); //failing here
-                    //overlays[i].remove();
+                    overlays[i].hide();
                     overlays.splice(i, 1);
                 }
             }
@@ -313,10 +297,7 @@ console.log("nothing");
             overlays.pop();
             markers.pop();
         }
-       // overlays.splice(0,length);
-        console.log(overlays.length);
         redrawAllPoints();
-        //getCornerPoints(); //should redraw everything... probably....
     }
 
     function showDiv() {
@@ -336,8 +317,6 @@ console.log("nothing");
         var title = document.getElementById("titleText").value;
         var description = document.getElementById("descriptionText").value;
         var currentID;
-
-        console.log(event.latLng.lat());
         GeospatialAPI.createFeature({x: event.latLng.lng(), y: event.latLng.lat()}, {title: title, description: description},function(feature) {
             GeospatialAPI.getFeature(feature.id, function(feature) {
                 console.log('got my feature that i just created: ' + feature.id);
@@ -377,23 +356,14 @@ console.log("nothing");
         var description = document.getElementById("descriptionTextEditor").value;
         var currentID = document.getElementById("id-value").value;
 
-        console.log(title);
-        console.log(description);
-        console.log(currentID);
-
         for (var i = 0; i < overlays.length; i++) {
-            console.log("lolwhat");
             if (overlays[i].getID() == currentID) {
-                console.log("fuck2");
                 overlays[i].setValues(title, description);
-                console.log("imhere");
                 GeospatialAPI.getFeature(currentID, function(feature) {
-                    console.log(feature);
-                    console.log(feature.payload.title);
                     feature.payload.title = title;
                     feature.payload.description = description;
                     GeospatialAPI.updateFeature(feature, function(feature) {
-                        console.log('now my feature has this shit: ' + feature.description + ' ' + feature.payload.title);
+                        //console.log('now my feature has this shit: ' + feature.description + ' ' + feature.payload.title);
                     })
                 });
             }
