@@ -7,7 +7,14 @@ var server = net.createServer(function(connection) {
     connection.guid = guid();
     connections[connection.guid] = connection;
 
+    connection.setKeepAlive(true, 0);
+
     connection.on('end', function() {
+        console.log('deleting connection');
+        delete connections[connection.guid];
+    });
+
+    connection.on('error', function() {
         delete connections[connection.guid];
     });
 });
