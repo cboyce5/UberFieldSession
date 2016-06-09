@@ -18,6 +18,7 @@ namespace ConsoleApplication1
         private static geospatial.thrift.Feature currentFeature;
         private static System.Net.Sockets.TcpClient serverSocket;
         private static BufferedStream in1;
+        private static geospatial.thrift.Geospatial.Client client;
 
 	    public static void Main(String[] args) {
 		    try {
@@ -33,7 +34,7 @@ namespace ConsoleApplication1
 			    transport.Open();
 
 			    Thrift.Protocol.TProtocol protocol = new  Thrift.Protocol.TBinaryProtocol(transport);
-			    geospatial.thrift.Geospatial.Client client = new geospatial.thrift.Geospatial.Client(protocol);
+			    client = new geospatial.thrift.Geospatial.Client(protocol);
 
 			    perform(client);
 			    transport.Close();
@@ -56,9 +57,8 @@ namespace ConsoleApplication1
 				    //System.Console.WriteLine("echo: "+ in1.Read());
 			    } catch (IOException e) {
 				    System.Console.WriteLine(e.Message);
-
-
 			    }
+                changeFeature();
 			    printOptions();
 			    int input = Convert.ToInt32(Console.ReadLine());
 			    switch (input) {
@@ -202,28 +202,51 @@ namespace ConsoleApplication1
 				    System.Console.WriteLine("Please enter a valid option.");
 				    break;
 			}
-                System.Console.Write("Would you like to change the feature you are editing?");
+                //System.Console.Write("Would you like to change the feature you are editing?");
 
-		}
-	}
+		    }
+	    }
         //Selects a feature based on id from the list of features returned from query (called above)
         private static Feature selectFeature(List<Feature> features)
         {
+            int i = 0;
             foreach (Feature f in features)
             {
+                System.Console.Write(i + ": ");
                 System.Console.WriteLine(f);
+                i++;
             }
-            System.Console.WriteLine("Enter the id of the feature you want: ");
-            String id = Console.ReadLine();
-            foreach (Feature f in features)
+            System.Console.Write("Enter the number of the feature that you want of the feature you want: ");
+            int numb = Convert.ToInt32(Console.ReadLine());
+            if (numb < features.Count)
             {
-                if (f.Id == id)
-                {
-
-                    return f;
-                }
+                return features.ElementAt(numb);
             }
+            //foreach (Feature f in features)
+            //{
+            //    if (f.Id == id)
+            //    {
+
+            //        return f;
+            //    }
+            //}
             return null;
+        }
+        private static List<Feature> getAllFeatures()
+        {
+            //Utilizes the get rectangle function to query the top left most point all the way to 
+            //the bottom right most point.  This gets all of the points.
+            Point newPoint_tl = new geospatial.thrift.Point();
+            newPoint_tl.X = -180;
+            newPoint_tl.Y = 180;
+            Point newPoint_br = new Point();
+            newPoint_br.X = 180;
+            newPoint_br.Y = -180;
+            Rectangle rect = new Rectangle();
+            rect.Top_lt = newPoint_tl;
+            rect.Btm_rt = newPoint_br;
+            List<Feature> features = client.getFeaturesInRect(rect);
+            return features;
         }
         private static void printOptions()
         {
@@ -244,6 +267,41 @@ namespace ConsoleApplication1
             System.Console.WriteLine("2. Change State");
             System.Console.WriteLine("3. Change Payload");
             System.Console.WriteLine("Enter your selection: ");
+        }
+        private static void changeFeature()
+        {
+            if (currentFeature != null)
+            {
+                System.Console.WriteLine("\nYour current feature is: " + currentFeature + "\n");
+                System.Console.Write("Would you like to change your current feature? (y/n)");
+                bool invalidSelection = true;
+                do
+                {
+                    String selection = Console.ReadLine();
+                    if (selection == "y" || selection == "Y")
+                    {
+                        invalidSelection = false;
+                        currentFeature = selectFeature(getAllFeatures());
+                        System.Console.WriteLine("\nYour current feature is: " + currentFeature + "\n");
+                    }
+                    else if (selection == "n" || selection == "N")
+                    {
+                        invalidSelection = false;
+                    }
+                    System.Console.Write("That is not a valid choice.  Please enter (y/n): ");
+                } while (invalidSelection);
+            }
+            else
+            {
+                System.Console.WriteLine("You do not have a feature currently selected.");
+                System.Console.Write("Would you like to select a feature (y/n)");
+                String choice = Console.ReadLine();
+                if (choice == "y" || choice == "Y")
+                {
+                    currentFeature = selectFeature(getAllFeatures());
+                    System.Console.WriteLine("\nYour current feature is: " + currentFeature + "\n");
+                }
+            }
         }
 	}
 }
