@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net;
-
+using System.Net.Sockets;
 using geospatial.thrift;
 using Thrift;
 
@@ -17,14 +17,15 @@ namespace ConsoleApplication1
     {
         private static geospatial.thrift.Feature currentFeature;
         private static System.Net.Sockets.TcpClient serverSocket;
-        private static BufferedStream in1;
         private static geospatial.thrift.Geospatial.Client client;
+        private static System.Net.Sockets.NetworkStream stream;
 
 	    public static void Main(String[] args) {
 		    try {
 			    try {
-				    serverSocket = new System.Net.Sockets.TcpClient("suchlol.com",6969);
-				    //in1 = new BufferedStream(new InputStreamReader(serverSocket.getInputStream()));
+                    serverSocket = new System.Net.Sockets.TcpClient("suchlol.com",6969);
+                    stream = serverSocket.GetStream();
+                    //Send the message to the connected TcpServer
 			    } catch (Exception e) {
 				    System.Console.WriteLine(e);
 			    }
@@ -35,7 +36,7 @@ namespace ConsoleApplication1
 
 			    Thrift.Protocol.TProtocol protocol = new  Thrift.Protocol.TBinaryProtocol(transport);
 			    client = new geospatial.thrift.Geospatial.Client(protocol);
-
+                serverSocket.Close();
 			    perform(client);
 			    transport.Close();
 		    } catch (TException x) {
@@ -54,10 +55,19 @@ namespace ConsoleApplication1
 		    bool loop = true;
 		    while (loop) {
 			    try {
-				    //System.Console.WriteLine("echo: "+ in1.Read());
+                    Byte[] data;
+                    data = new Byte[256];
+                    // String to store the response ASCII representation.
+                    String responseData = String.Empty;
+                    // Read the first batch of the TcpServer response bytes.
+                    Int32 bytes = stream.Read(data, 0, data.Length);
+                    responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                    Console.WriteLine("Received: {0}", responseData); 
 			    } catch (IOException e) {
 				    System.Console.WriteLine(e.Message);
-			    }
+			    } catch(Exception r){
+                    System.Console.WriteLine(r.Message);
+                }
                 changeFeature();
 			    printOptions();
 			    int input = Convert.ToInt32(Console.ReadLine());
