@@ -5,3 +5,4 @@ C:\Users\nash1_000\FieldSession\UberFieldSession\csharp\ConsoleApplication1\Cons
 C:\Users\nash1_000\FieldSession\UberFieldSession\csharp\ConsoleApplication1\ConsoleApplication1\bin\Debug\Thrift.pdb
 C:\Users\nash1_000\FieldSession\UberFieldSession\csharp\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.exe
 C:\Users\nash1_000\FieldSession\UberFieldSession\csharp\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.pdb
+C:\Users\nash1_000\FieldSession\UberFieldSession\csharp\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.csprojResolveAssemblyReference.cache
