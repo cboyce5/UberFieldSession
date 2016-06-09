@@ -100,6 +100,7 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBORoljxV99j1KvcO2mkD4BNNuAPanaZtE&libraries=drawing"></script>
 <script type="text/javascript" src="customMarker.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="socket.io.js"></script>
 <script src="geospatialapi.js"></script>
 <script type="text/javascript">
 
@@ -111,6 +112,7 @@
 
 
     GeospatialAPI.onUpdateReceived = function(feature_id) {
+        console.log("I heard you");
         drawAllMarkers(); //redraw bullshit
     }
 
