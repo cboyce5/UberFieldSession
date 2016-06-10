@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>Simple  for Uber</title>
+    <title>Uber Maps</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <style>
@@ -22,15 +22,12 @@
 <div id="wrapper">
     <div id="topBar">
         <div id="title">
-            <h2>TOPBAR</h2>
+            <h2>Uber Field Session</h2>
         </div>
         <div id="buttonBar">
-            <a href="#" class="myButton">RandomButton1</a>
-            <a href="#" class="myButton">RandomButton2</a>
-            <a href="#" class="myButton">RandomButton3</a>
-            <a href="#" class="myButton">RandomButton4</a>
-            <a href="https://www.youtube.com/watch?v=lXMskKTw3Bc" target="_blank" class="myButton">Never gonna hit those notes</a>
             <a href="#" onclick="showDiv();" class="myButton">Marker Creator</a>
+            <a href="#" class="myButton">Button</a>
+            <a href="https://www.youtube.com/watch?v=lXMskKTw3Bc" target="_blank" class="myButton">Never gonna hit those notes</a>
         </div>
     </div>
 
@@ -43,6 +40,7 @@
         <div id="map">
 
         </div>
+        <input id="pac-input" class="controls" type="text" placeholder="Search Box">
     </div>
 
     <div id="drop-down" style="display:none;" class="answer_list" >
@@ -97,7 +95,7 @@
 </div>
 
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBORoljxV99j1KvcO2mkD4BNNuAPanaZtE&libraries=drawing"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBORoljxV99j1KvcO2mkD4BNNuAPanaZtE&libraries=drawing,places"></script>
 <script type="text/javascript" src="customMarker.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script src="socket.io.js"></script>
@@ -125,17 +123,38 @@
             zoom: 13,
         });
 
+        var input = document.getElementById('pac-input');
+        var searchBox = new google.maps.places.SearchBox(input);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        map.addListener('bounds_changed', function() {
+            searchBox.setBounds(map.getBounds());
+        });
+
+        searchBox.addListener('places_changed', function() {
+            var places = searchBox.getPlaces();
+            var bounds = new google.maps.LatLngBounds();
+
+            places.forEach(function(place) {
+                var icon = {
+                    url: place.icon,
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(25, 25)
+                };
+                if (place.geometry.viewport) {
+                    // Only geocodes have viewport.
+                    bounds.union(place.geometry.viewport);
+                } else {
+                    bounds.extend(place.geometry.location);
+                }
+            });
+            map.fitBounds(bounds);
+        });
+
         map.addListener('zoom_changed', function() {
-            var oLength = overlays.length;
-            if (map.getZoom() >= 14) {
-                for (var i = 0; i < oLength; i++) {
-                    overlays[i].show();
-                }
-            } else {
-                for (var i = 0; i < oLength; i++) {
-                    overlays[i].hide();
-                }
-            }
+            checkZoom();
         });
 
 
@@ -226,6 +245,7 @@
                     ));
                 }
             }
+            checkZoom();
         });
     }
 
@@ -241,7 +261,7 @@
 
         GeospatialAPI.getFeaturesInRect({x: corner2.lng(), y: corner2.lat()}, {x: corner4.lng(), y: corner4.lat()}, function(features) {
             for (var i = 0; i < features.length; i++) {
-
+                console.log("drawing");
                 var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
 
                 var marker = new google.maps.Marker({
@@ -265,6 +285,10 @@
                         features[i].payload.description
                 ));
             }
+
+            console.log("done");
+            checkZoom();
+
             google.maps.event.clearListeners(map, 'click');
 
             addMarkerListeners();
@@ -361,6 +385,18 @@
         }
     }
 
+    function checkZoom() {
+        var oLength = overlays.length;
+        if (map.getZoom() >= 14) {
+            for (var i = 0; i < oLength; i++) {
+                overlays[i].show();
+            }
+        } else {
+            for (var i = 0; i < oLength; i++) {
+                overlays[i].hide();
+            }
+        }
+    }
     function saveOverData() {
 
         var title = document.getElementById("titleTextEditor").value;
