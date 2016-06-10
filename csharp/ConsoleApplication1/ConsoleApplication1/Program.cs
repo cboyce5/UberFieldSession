@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net;
-
+using System.Net.Sockets;
 using geospatial.thrift;
 using Thrift;
 
@@ -16,18 +16,10 @@ namespace ConsoleApplication1
     class Program
     {
         private static geospatial.thrift.Feature currentFeature;
-        private static System.Net.Sockets.TcpClient serverSocket;
-        private static BufferedStream in1;
         private static geospatial.thrift.Geospatial.Client client;
 
 	    public static void Main(String[] args) {
 		    try {
-			    try {
-				    serverSocket = new System.Net.Sockets.TcpClient("suchlol.com",6969);
-				    //in1 = new BufferedStream(new InputStreamReader(serverSocket.getInputStream()));
-			    } catch (Exception e) {
-				    System.Console.WriteLine(e);
-			    }
 
 			    Thrift.Transport.TTransport transport;
 			    transport = new Thrift.Transport.TSocket("suchlol.com", 9090);
@@ -42,22 +34,13 @@ namespace ConsoleApplication1
 
 			    Console.WriteLine(x.StackTrace);
 		    } 
-		    try {
-			    serverSocket.Close();
-		    } catch (IOException e) {
-			    Console.WriteLine(e.StackTrace);
-		    }
 
 	    }
         private static void perform(geospatial.thrift.Geospatial.Client client)	{
 		    //Scanner reader = new Scanner(System.in);
 		    bool loop = true;
 		    while (loop) {
-			    try {
-				    //System.Console.WriteLine("echo: "+ in1.Read());
-			    } catch (IOException e) {
-				    System.Console.WriteLine(e.Message);
-			    }
+
                 changeFeature();
 			    printOptions();
 			    int input = Convert.ToInt32(Console.ReadLine());
