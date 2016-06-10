@@ -1,22 +1,13 @@
 var GeospatialAPI = function() {
-    var ws = null;
     return {
         init: function() {
+            var socket = io.connect('http://'+window.location.host);
+
             var self = this;
-            if ("WebSocket" in window) {
-                ws = new WebSocket('ws://'+window.location.host+'/kafka');
 
-                ws.onopen = function() {
-                    this.send("Message to send");
-                }.bind(ws);
-
-                ws.onmessage = function(evt) {
-                    console.log('receiving message');
-                    self.onUpdateReceived(evt.data);
-                };
-            } else {
-                alert("WebSocket NOT supported by your Browser!");
-            }
+            socket.on('geospatial', function (data) {
+                self.onUpdateReceived(data);
+            });
         },
 
         onUpdateReceived: function(data) {
@@ -115,7 +106,6 @@ var GeospatialAPI = function() {
         }
     }
 }();
-
 GeospatialAPI.init();
 
 

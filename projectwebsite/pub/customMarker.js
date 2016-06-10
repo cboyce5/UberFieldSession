@@ -29,9 +29,12 @@ CustomMarker.prototype.draw = function() {
 		var div_pointer = document.createElement('div');
 		div_pointer.className = 'triangle-with-shadow', 'triangle-with-shadow:after';
 
-
 		div = this.div = document.createElement('div');
-		div.className = 'div_within_marker';
+		if (this.args.state == 1) {
+			div.className = 'div_within_marker';
+		} else {
+			div.className = 'div_within_marker_dirty';
+		}
 		div.appendChild(div_pointer);
 		div.appendChild(div_title);
 		div.appendChild(div_description);
@@ -46,15 +49,34 @@ CustomMarker.prototype.draw = function() {
 		var self = this;
 
 		google.maps.event.addDomListener(div, "click", function() {
+			
 			document.getElementById("titleTextEditor").value = self.title;
 			document.getElementById("descriptionTextEditor").value = self.description;
 			document.getElementById("id-value").value = self.args.marker_id;
+			
 			var div1 = document.getElementById('right-sidebar');
 			if (div1.style.display !== 'none') {
 				div1.style.display = 'none';
+				
+				GeospatialAPI.getFeature(self.args.marker_id, function(feature) {
+					feature.state = 1;
+					GeospatialAPI.updateFeature(feature, function(feature) {
+						console.log("clean");
+					});
+				});
+				
 			}
 			else {
 				div1.style.display = 'block';
+				
+				GeospatialAPI.getFeature(self.args.marker_id, function(feature) {
+					feature.state = 2;
+					GeospatialAPI.updateFeature(feature, function(feature) {
+						console.log("dirty");
+					});
+				});
+				
+				
 			}
 
 		});
