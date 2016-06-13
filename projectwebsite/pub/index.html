@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/html">
 <link href = "main.css" rel="stylesheet" type="text/css"/>
+<link href='https://fonts.googleapis.com/css?family=Syncopate:700,400' rel='stylesheet' type='text/css'>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <title>Uber Maps</title>
@@ -21,16 +23,27 @@
 <body>
 <div id="wrapper">
     <div id="topBar">
-        <div id="title">
-            <h2>Uber Field Session</h2>
-        </div>
         <div id="buttonBar">
             <a href="#" onclick="showDiv();" class="myButton">Marker Creator</a>
-            <a href="#" class="myButton">Button</a>
-            <a href="https://www.youtube.com/watch?v=lXMskKTw3Bc" target="_blank" class="myButton">Never gonna hit those notes</a>
+            <a href="about.html" class="myButton">About us</a>
         </div>
     </div>
+    <div id="blackTopBar">
 
+    </div>
+    <div id="topSideBar">
+        <div id="uberLogo">
+           <img src="uber-logo.jpg" alt="Uber" height="120" width="120">
+        </div>
+    </div>
+    <div id="textOnTop">
+        <div id="fieldSessionText">
+            <p>field session</p>
+        </div>
+    </div>
+    <div id="graySplitBar">
+
+    </div>
     <!--
     <div id="left-sidebar">
         <h2> Hello </h2>
@@ -107,11 +120,44 @@
     var markers = new Array();
     var myLatLng;
     var overlays = [];
-
+    var overlaysMap = {};
+    var myVar;
 
     GeospatialAPI.onUpdateReceived = function(feature_id) {
-        console.log("I heard you");
-        drawAllMarkers(); //redraw bullshit
+        checkID(feature_id);
+    }
+
+
+
+    function checkID(feature_id) {
+        overlaysMap[feature_id]
+        if (overlaysMap.hasOwnProperty(feature_id)) {
+            redrawPoint(feature_id);
+        } else {
+            getCornerPoints();
+        }
+    }
+
+    function redrawPoint(feature_id) {
+        overlaysMap[feature_id].hide();
+        delete overlaysMap[feature_id];
+
+        GeospatialAPI.getFeature(feature_id, function(feature) {
+
+            var customLatLng = new google.maps.LatLng(feature.point.y, feature.point.x);
+
+            overlaysMap[feature_id] = (new CustomMarker(
+                    customLatLng,
+                    map,
+                    {
+                        marker_id: feature.id,
+                        state: feature.state,
+                        rightSidebar: document.getElementById('right-sidebar')
+                    },
+                    feature.payload.title,
+                    feature.payload.description
+            ));
+        });
     }
 
     function initMap() {
@@ -160,6 +206,7 @@
 
         map.addListener('idle', function() {
             getCornerPoints();
+            //myVar = setTimeout(checkZoom, 2000);
         });
 
 
@@ -179,8 +226,10 @@
         var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
 
         GeospatialAPI.getFeaturesInRect({x: corner2.lng(), y: corner2.lat()}, {x: corner4.lng(), y: corner4.lat()}, function(features) {
-            if(overlays.length == 0) {
-                for (var i = 0; i < features.length; i++) {
+
+
+            for (var i = 0; i < features.length; i++) {
+                if (overlaysMap.hasOwnProperty(features[i].id) == false) {
                     var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
 
                     var marker = new google.maps.Marker({
@@ -191,48 +240,8 @@
                     });
 
                     markers.push(marker);
-                    overlays.push(new CustomMarker(
-                            customLatLng,
-                            map,
-                            {
-                                marker_id: features[i].id,
-                                state: features[i].state,
-                                rightSidebar: document.getElementById('right-sidebar')
-                            },
-                            features[i].payload.title,
-                            features[i].payload.description
-                    ));
-                }
-                addMarkerListeners();
-            } else {
-                for (var i = 0; i < overlays.length; i++) {
-                    for (var j = 0; j < features.length; j++) {
-                        var check = overlays[i].getID().localeCompare(features[j].id);
-                        if (check == 0) {
-                            features.splice(j, 1);
-                        }
-                    }
-                }
-                for (var i = 0; i < features.length; i++) {
-                    var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
-                    var marker = new google.maps.Marker({
-                        position: customLatLng,
-                        map: map,
-                        title: "Please zoom in to edit/view data",
-                        id: features[i].id,
-                    });
 
-                    markers.push(marker);
-
-                    google.maps.event.addListener(marker, 'click', function () {
-                        for (var i = 0; i < overlays.length; i++) {
-                            if (overlays[i].getID() == this.get("id")) {
-                                overlays[i].show();
-                            }
-                        }
-                    });
-
-                    overlays.push(new CustomMarker(
+                    overlaysMap[features[i].id] = (new CustomMarker(
                             customLatLng,
                             map,
                             {
@@ -245,6 +254,9 @@
                     ));
                 }
             }
+
+
+            addMarkerListeners();
             checkZoom();
         });
     }
@@ -261,7 +273,6 @@
 
         GeospatialAPI.getFeaturesInRect({x: corner2.lng(), y: corner2.lat()}, {x: corner4.lng(), y: corner4.lat()}, function(features) {
             for (var i = 0; i < features.length; i++) {
-                console.log("drawing");
                 var customLatLng = new google.maps.LatLng(features[i].point.y, features[i].point.x);
 
                 var marker = new google.maps.Marker({
@@ -273,7 +284,7 @@
 
                 markers.push(marker);
 
-                overlays.push(new CustomMarker(
+                overlaysMap[features[i].id] = (new CustomMarker(
                         customLatLng,
                         map,
                         {
@@ -286,7 +297,6 @@
                 ));
             }
 
-            console.log("done");
             checkZoom();
 
             google.maps.event.clearListeners(map, 'click');
@@ -301,28 +311,25 @@
         var result = confirm('Are you sure you want to delete this Marker?');
 
         if (result) {
-            for (var i = 0; i < overlays.length; i++) {
-                if (overlays[i].getID() == currentID) {
+            var overlay = overlaysMap[currentID];
 
-                    for (var j = 0; j < markers.length; j++) {
-                        if (markers[j].position.lat() == overlays[i].latlng.lat() && markers[j].position.lng() == overlays[i].latlng.lng() ) {
-                            markers[j].setMap(null);
-                        }
-                    }
-
-
-                    GeospatialAPI.getFeature(currentID, function(feature) {
-                        GeospatialAPI.deleteFeature(feature, function(status) {
-                            if(status.status == 'success') {
-                                console.log('this shit was deleted');
-                            }
-                        })
-                    });
-                    overlays[i].hide();
-                    overlays.splice(i, 1);
+            for (var j = 0; j < markers.length; j++) {
+                if (markers[j].position.lat() == overlay.latlng.lat() && markers[j].position.lng() == overlay.latlng.lng() ) {
+                    markers[j].setMap(null);
                 }
             }
+
+            GeospatialAPI.getFeature(currentID, function(feature) {
+                GeospatialAPI.deleteFeature(feature, function(status) {
+                    if(status.status == 'success') {
+                        console.log('this shit was deleted');
+                    }
+                })
+            });
+            overlay.hide();
+            delete overlaysMap[currentID];
         }
+
         document.getElementById('right-sidebar').style.display = 'none';
     }
 
@@ -330,14 +337,17 @@
     function drawAllMarkers() {
 
 
-        var length = overlays.length - 1;
+        var length = markers.length - 1;
         for (var i = 0; i < markers.length; i++) {
             markers[i].setMap(null);
         }
         for (var i = length ; i >= 0; i--) {
-            overlays[i].hide();
-            overlays.pop();
             markers.pop();
+        }
+        var key;
+        for (key in overlaysMap) {
+            overlaysMap[key].hide();
+            delete overlaysMap[key];
         }
 
         redrawAllPoints();
@@ -374,11 +384,7 @@
 
             google.maps.event.addListener(markers[i], 'click', function () {
 
-                for (var i = 0; i < overlays.length; i++) {
-                    if (overlays[i].getID() == this.get("id")) {
-                        overlays[i].show();
-                    }
-                }
+                overlaysMap[this.get("id")].show();
 
             });
 
@@ -386,37 +392,33 @@
     }
 
     function checkZoom() {
-        var oLength = overlays.length;
+        var key;
         if (map.getZoom() >= 14) {
-            for (var i = 0; i < oLength; i++) {
-                overlays[i].show();
+            for (key in overlaysMap) {
+                overlaysMap[key].show();
             }
         } else {
-            for (var i = 0; i < oLength; i++) {
-                overlays[i].hide();
+            for (key in overlaysMap) {
+                overlaysMap[key].hide();
             }
         }
     }
+
     function saveOverData() {
 
         var title = document.getElementById("titleTextEditor").value;
         var description = document.getElementById("descriptionTextEditor").value;
         var currentID = document.getElementById("id-value").value;
 
-        for (var i = 0; i < overlays.length; i++) {
-            if (overlays[i].getID() == currentID) {
-                overlays[i].setValues(title, description);
-                GeospatialAPI.getFeature(currentID, function(feature) {
-                    feature.payload.title = title;
-                    feature.payload.description = description;
-                    feature.state = 1;
-                    GeospatialAPI.updateFeature(feature, function(feature) {
-                        //console.log('now my feature has this shit: ' + feature.description + ' ' + feature.payload.title);
-                    })
-                });
-            }
-
-        }
+        overlaysMap[currentID].setValues(title, description);
+        GeospatialAPI.getFeature(currentID, function(feature) {
+            feature.payload.title = title;
+            feature.payload.description = description;
+            feature.state = 1;
+            GeospatialAPI.updateFeature(feature, function(feature) {
+                //console.log('now my feature has this shit: ' + feature.description + ' ' + feature.payload.title);
+            })
+        });
         document.getElementById("right-sidebar").style.display = 'none';
     }
 
@@ -424,17 +426,13 @@
 
         var currentID = document.getElementById("id-value").value;
 
-        for (var i = 0; i < overlays.length; i++) {
-            if (overlays[i].getID() == currentID) {
-                GeospatialAPI.getFeature(currentID, function(feature) {
-                    feature.state = 1;
-                    GeospatialAPI.updateFeature(feature, function(feature) {
+        GeospatialAPI.getFeature(currentID, function(feature) {
+            feature.state = 1;
+            GeospatialAPI.updateFeature(feature, function(feature) {
 
-                    })
-                });
-            }
+            })
+        });
 
-        }
         document.getElementById("right-sidebar").style.display = 'none';
     }
 
