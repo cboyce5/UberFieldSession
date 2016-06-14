@@ -84,26 +84,12 @@ img {
     height: auto;
 }
 
-@media only screen
-and (max-device-width : 320px)
-and (max-device-width : 480px){
 
-    #teamDescriptionBar {
-        position: absolute;
-        background-color: dimgrey;
-        width: 200px;
-        margin: 3px;
-        top: 0;
-        bottom: 0;
-        overflow: scroll;
-    }
-
-}
 
 #middlePicture {
     position: absolute;
-    max-width: 65%;
     right: 0px;
+    left: 377px;
     margin: 10px;
     top: 0;
     bottom: 0;
@@ -116,7 +102,6 @@ and (max-device-width : 480px){
     position: absolute;
     background-color: dimgrey;
     width: 377px;
-    max-width: 33%;
     margin: 3px;
     top: 0;
     bottom: 0;
@@ -228,6 +213,10 @@ and (max-device-width : 480px){
     padding: 30px;
 }
 
+#mobileButtonBar {
+    display: none;
+}
+
 .div_title {
     position: absolute;
     width: 200px;
@@ -306,6 +295,57 @@ and (max-device-width : 480px){
 
 .pac-container {
     font-family: Roboto;
+}
+
+
+@media only screen
+and (max-device-width : 480px){
+
+    #teamDescriptionBar {
+        width: 95%;
+        margin: 10px;
+        top: 169px;
+    }
+
+    #middlePicture {
+        max-height: 160px;
+        left: 0;
+        object-fit: scale-down;
+    }
+
+
+    #buttonBar {
+        display: none;
+    }
+
+    #mobileButtonBar {
+        display: block;
+        bottom: 0;
+        float: left;
+        left: 144px;
+        margin-top: 15px;
+        padding: 30px;
+    }
+
+    #right-sidebar {
+        width: 100px;
+    }
+
+    #titleTextEditor {
+        width: 70px;
+    }
+
+    #descriptionTextEditor {
+        width: 70px;
+    }
+
+    #wrapper {
+        width: 100%;
+    }
+
+    #pac-input {
+        width: 200px;
+    }
 }
 
 .myButton {

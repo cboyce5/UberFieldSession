@@ -53,30 +53,34 @@ CustomMarker.prototype.draw = function() {
 			document.getElementById("titleTextEditor").value = self.title;
 			document.getElementById("descriptionTextEditor").value = self.description;
 			document.getElementById("id-value").value = self.args.marker_id;
-			
-			var div1 = document.getElementById('right-sidebar');
-			if (div1.style.display !== 'none') {
-				div1.style.display = 'none';
-				
-				GeospatialAPI.getFeature(self.args.marker_id, function(feature) {
-					feature.state = 1;
-					GeospatialAPI.updateFeature(feature, function(feature) {
-						console.log("clean");
+
+			if (window.mobilecheck() == false) {
+				var div1 = document.getElementById('right-sidebar');
+				if (div1.style.display !== 'none') {
+					div1.style.display = 'none';
+
+					GeospatialAPI.getFeature(self.args.marker_id, function(feature) {
+						feature.state = 1;
+						GeospatialAPI.updateFeature(feature, function(feature) {
+							console.log("clean");
+						});
 					});
-				});
-				
-			}
-			else {
-				div1.style.display = 'block';
-				
-				GeospatialAPI.getFeature(self.args.marker_id, function(feature) {
-					feature.state = 2;
-					GeospatialAPI.updateFeature(feature, function(feature) {
-						console.log("dirty");
+
+				}
+				else {
+					div1.style.display = 'block';
+
+					GeospatialAPI.getFeature(self.args.marker_id, function(feature) {
+						feature.state = 2;
+						GeospatialAPI.updateFeature(feature, function(feature) {
+							console.log("dirty");
+						});
 					});
-				});
-				
-				
+
+
+				}
+			} else {
+				console.log("currently mobile");
 			}
 
 		});
