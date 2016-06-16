@@ -126,6 +126,7 @@
     var myVar;
 
     GeospatialAPI.onUpdateReceived = function(feature_id) {
+        console.log("I heard you");
         checkID(feature_id);
     }
 
@@ -134,8 +135,18 @@
     function checkID(feature_id) {
         overlaysMap[feature_id]
         if (overlaysMap.hasOwnProperty(feature_id)) {
+
+            var overlay = overlaysMap[feature_id];
+
+            for (var j = 0; j < markers.length; j++) {
+                if (markers[j].position.lat() == overlay.latlng.lat() && markers[j].position.lng() == overlay.latlng.lng() ) {
+                    markers[j].setMap(null);
+                }
+            }
+
             overlaysMap[feature_id].hide();
             delete overlaysMap[feature_id];
+
         }
         getCornerPoints();
     }
