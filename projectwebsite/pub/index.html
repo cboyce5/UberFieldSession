@@ -72,15 +72,6 @@
             <input type = "text"
                    id = "descriptionText"
                    value = "Please enter a description" />
-            <input type = "number" style="display:none;"
-                   id = "content-id"
-                   value = "0000000000" />
-            <input type = "text" style="display:none;"
-                   id = "content-point"
-                   value = "0,0" />
-            <input type = "text" style="display:none;"
-                   id = "content-type"
-                   value = "DIRTY" />
         </div>
         <div id="button-space">
             <button onclick="createDataButton()">Create Marker</button>
@@ -143,7 +134,7 @@
         if ((un == username) && (pw == password)) {
             loggedIn = true;
             alert ("Login was successful, you may now edit the map");
-            setCookie("username", un, .1);
+            setCookie("username", un, 1);
             showDiv2();
         }
         else {
@@ -170,10 +161,9 @@
     function checkCookie() {
         var user=getCookie("username");
         if (user != "") {
-            console.log("you're back yo");
             loggedIn = true;
         } else {
-            console.log("you're new ya slut");
+            loggedIn = false;
         }
     }
 
