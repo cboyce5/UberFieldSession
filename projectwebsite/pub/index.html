@@ -28,6 +28,7 @@
         </div>
         <div id="loginButton">
             <a href="#" onclick="showDiv2();" class="myButton">Login</a>
+            <a href="#" onclick="logOut();" class="myButton">Logout</a>
         </div>
         <div id="mobileButtonBar">
             <a href="about.html" class="myButton">About us</a>
@@ -151,6 +152,11 @@
         else {
             div.style.display = 'block';
         }
+    }
+
+    function logOut() {
+        loggedIn = false;
+        alert ("Successfully logged out");
     }
 
 
