@@ -54,7 +54,7 @@ CustomMarker.prototype.draw = function() {
 			document.getElementById("descriptionTextEditor").value = self.description;
 			document.getElementById("id-value").value = self.args.marker_id;
 
-			if (window.mobilecheck() == false) {
+			if (window.mobilecheck() == false && loggedIn == true) {
 				var div1 = document.getElementById('right-sidebar');
 				if (div1.style.display !== 'none') {
 					div1.style.display = 'none';

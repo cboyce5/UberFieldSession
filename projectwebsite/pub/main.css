@@ -122,6 +122,16 @@ img {
     background-color: darkgray;
 }
 
+#drop-down-2 {
+    position: absolute;
+    padding-top: 10px;
+    top: 89px;
+    left: 0;
+    right: 0;
+    height: 89px;
+    background-color: darkgray;
+}
+
 #title {
     position: absolute;
     right: 89px;
@@ -209,6 +219,14 @@ img {
     bottom: 0;
     float: left;
     left: 144px;
+    margin-top: 15px;
+    padding: 30px;
+}
+
+#loginButton {
+    bottom: 0;
+    float: right;
+    right: 0;
     margin-top: 15px;
     padding: 30px;
 }

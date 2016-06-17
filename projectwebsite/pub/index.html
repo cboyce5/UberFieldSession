@@ -19,12 +19,15 @@
         }
     </style>
 </head>
-<body>
+<body onload="checkCookie()">
 <div id="wrapper">
     <div id="topBar">
         <div id="buttonBar">
             <a href="#" onclick="showDiv();" class="myButton">Marker Creator</a>
             <a href="about.html" class="myButton">About us</a>
+        </div>
+        <div id="loginButton">
+            <a href="#" onclick="showDiv2();" class="myButton">Login</a>
         </div>
         <div id="mobileButtonBar">
             <a href="about.html" class="myButton">About us</a>
@@ -35,7 +38,8 @@
     </div>
     <div id="topSideBar">
         <div id="uberLogo">
-           <img src="uber-logo.jpg" alt="Uber" height="120" width="120">
+            <input type="text" style="display: none" id="hpword" value="Uber2016">
+            <img src="uber-logo.jpg" alt="Uber" height="120" width="120">
         </div>
     </div>
     <div id="textOnTop">
@@ -82,6 +86,15 @@
             <button onclick="createDataButton()">Create Marker</button>
         </div>
     </div>
+    <div id="drop-down-2" style="display:none;" class="answer_list" >
+            <label>User name</label>
+            <input type="text" style="display: none" id="usrn" value="admin">
+            <input type="text" id="usr" placeholder="username">
+            <label>Password</label>
+            <input type="password" id="pword" placeholder="password">
+            <button onclick="validateForm()">Login</button>
+            <button onclick="showDiv2()">Close</button>
+    </div>
     <div id="right-sidebar" style="display:none;" class="editing_stuff" >
         <div id="surrounding-outline">
             <div id="title-editor">
@@ -115,6 +128,78 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script src="socket.io.js"></script>
 <script src="geospatialapi.js"></script>
+
+<script>
+
+    var loggedIn;
+    var randomPass;
+    var randomUsername;
+
+    function validateForm() {
+        var un = document.getElementById('usr').value;
+        var pw = document.getElementById('pword').value;
+        var username = randomUsername;
+        var password = randomPass;
+        if ((un == username) && (pw == password)) {
+            loggedIn = true;
+            alert ("Login was successful, you may now edit the map");
+            setCookie("username", un, .1);
+            showDiv2();
+        }
+        else {
+            alert ("Login was unsuccessful, please check your username and password");
+            loggedIn = false;
+        }
+    }
+
+    function showDiv2() {
+        var div = document.getElementById('drop-down-2');
+        if (div.style.display !== 'none') {
+            div.style.display = 'none';
+        }
+        else {
+            div.style.display = 'block';
+        }
+    }
+
+
+</script>
+
+<script>
+
+    function checkCookie() {
+        var user=getCookie("username");
+        if (user != "") {
+            console.log("you're back yo");
+            loggedIn = true;
+        } else {
+            console.log("you're new ya slut");
+        }
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i<ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    function setCookie(cname,cvalue,exhours) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exhours*60*60*1000));
+        var expires = "expires=" + d.toGMTString();
+        document.cookie = cname+"="+cvalue+"; "+expires;
+    }
+</script>
+
 <script type="text/javascript">
 
     var poly;
@@ -125,12 +210,11 @@
     var overlaysMap = {};
     var myVar;
 
+
     GeospatialAPI.onUpdateReceived = function(feature_id) {
         console.log("I heard you");
         checkID(feature_id);
     }
-
-
 
     function checkID(feature_id) {
         overlaysMap[feature_id]
@@ -214,11 +298,12 @@
 
     function getCornerPoints() {
 
+        randomUsername = document.getElementById('usrn').value;
         var bounds = map.getBounds();
 
         var NECorner = bounds.getNorthEast();
         var SWCorner = bounds.getSouthWest();
-
+        randomPass = document.getElementById('hpword').value;
         var corner2 = new google.maps.LatLng(NECorner.lat(), SWCorner.lng());
         var corner4 = new google.maps.LatLng(SWCorner.lat(), NECorner.lng());
 
@@ -351,16 +436,18 @@
     }
 
     function showDiv() {
-
-        var div = document.getElementById('drop-down');
-        if (div.style.display !== 'none') {
-            div.style.display = 'none';
-        }
-        else {
-            div.style.display = 'block';
+        if (loggedIn == true) {
+            var div = document.getElementById('drop-down');
+            if (div.style.display !== 'none') {
+                div.style.display = 'none';
+            }
+            else {
+                div.style.display = 'block';
+            }
+        } else {
+            alert("You need to be logged in to use this function!");
         }
     }
-
 
     //This places random markers on clicks
     function addMarker(event) {
